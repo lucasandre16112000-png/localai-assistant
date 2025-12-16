@@ -32,8 +32,8 @@ import {
   Bar,
 } from 'recharts'
 import { useQuery } from '@tanstack/react-query'
-import { getDashboardStats, type DashboardStats } from '@/lib/api'
-import { formatNumber } from '@/lib/utils'
+import { getDashboardStats, type DashboardStats } from '../../lib/api'
+import { formatNumber } from '../../lib/utils'
 
 const activityData = [
   { name: 'Mon', messages: 45, tokens: 12000 },

@@ -18,9 +18,9 @@ import {
   Bot,
   Sparkles,
 } from 'lucide-react'
-import { useStore, type Conversation } from '@/lib/store'
-import { cn, formatRelativeTime, truncate } from '@/lib/utils'
-import { Button } from '@/components/ui/Button'
+import { useStore, type Conversation } from '../../lib/store'
+import { cn, formatRelativeTime, truncate } from '../../lib/utils'
+import { Button } from '../ui/Button'
 
 interface SidebarProps {
   onNewChat: () => void

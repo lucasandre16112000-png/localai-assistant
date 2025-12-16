@@ -10,7 +10,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Menu } from 'lucide-react'
 import toast from 'react-hot-toast'
 
-import { useStore, type Message } from '@/lib/store'
+import { useStore, type Message } from './lib/store'
 import {
   getConversations,
   getConversation,
@@ -19,12 +19,12 @@ import {
   sendMessage,
   sendMessageStream,
   getModels,
-} from '@/lib/api'
+} from './lib/api'
 
-import { Sidebar } from '@/components/Sidebar/Sidebar'
-import { Chat } from '@/components/Chat/Chat'
-import { Dashboard } from '@/components/Dashboard/Dashboard'
-import { Settings } from '@/components/Settings/Settings'
+import { Sidebar } from './components/Sidebar/Sidebar'
+import { Chat } from './components/Chat/Chat'
+import { Dashboard } from './components/Dashboard/Dashboard'
+import { Settings } from './components/Settings/Settings'
 
 const App: React.FC = () => {
   const queryClient = useQueryClient()

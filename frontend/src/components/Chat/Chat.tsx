@@ -20,9 +20,9 @@ import {
 import ReactMarkdown from 'react-markdown'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
-import { useStore, type Message } from '@/lib/store'
-import { cn, copyToClipboard } from '@/lib/utils'
-import { Button } from '@/components/ui/Button'
+import { useStore, type Message } from '../../lib/store'
+import { cn, copyToClipboard } from '../../lib/utils'
+import { Button } from '../ui/Button'
 import toast from 'react-hot-toast'
 
 interface ChatProps {
