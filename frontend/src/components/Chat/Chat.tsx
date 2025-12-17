@@ -260,7 +260,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, onCopy, isCopied
         {!isUser && (
           <div className="flex items-center gap-2 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
             <button
-              onClick={() => onCopy(message.content, message.uuid)}
+              onClick={() => onCopy(message.content, message.uuid || message.id)}
               className="p-1.5 rounded-lg hover:bg-dark-700 text-dark-400 hover:text-dark-200 transition-colors"
               title="Copy"
             >

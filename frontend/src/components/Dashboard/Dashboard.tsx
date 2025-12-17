@@ -68,6 +68,8 @@ export const Dashboard: React.FC = () => {
     total_conversations: 0,
     total_messages: 0,
     total_tokens: 0,
+    average_response_time: 0,
+    models_used: {},
     active_model: 'dolphin-mistral',
     avg_response_time: 0,
     conversations_today: 0,
@@ -124,7 +126,7 @@ export const Dashboard: React.FC = () => {
         />
         <StatCard
           title="Avg Response Time"
-          value={`${displayStats.avg_response_time.toFixed(2)}s`}
+          value={`${(displayStats.avg_response_time || displayStats.average_response_time || 0).toFixed(2)}s`}
           icon={<Clock className="w-6 h-6" />}
           color="yellow"
           delay={0.3}
@@ -289,7 +291,7 @@ export const Dashboard: React.FC = () => {
           <div className="space-y-4">
             <QuickStatItem
               label="Active Model"
-              value={displayStats.active_model}
+              value={displayStats.active_model || 'dolphin-mistral'}
               icon={<Bot className="w-5 h-5 text-primary-400" />}
             />
             <QuickStatItem

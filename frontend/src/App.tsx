@@ -71,7 +71,8 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (modelsData?.models) {
-      setModels(modelsData.models)
+      const modelNames = modelsData.models.map((m: any) => typeof m === 'string' ? m : m.name)
+      setModels(modelNames)
     }
   }, [modelsData, setModels])
 
