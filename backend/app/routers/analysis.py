@@ -4,7 +4,7 @@ API endpoints para análise de imagens, vídeos e dados
 Author: Manus AI
 """
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Body
 from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
 from ..services.image_analysis import image_analysis
@@ -280,7 +280,7 @@ async def detect_anomalies(
 
 @router.post("/data/clustering")
 async def clustering_analysis(
-    data: List[List[float]] = Query(...),
+    data: List[List[float]] = Body(...),
     num_clusters: int = Query(3, ge=2, le=20)
 ):
     """
