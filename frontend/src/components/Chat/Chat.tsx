@@ -275,11 +275,11 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, onCopy, isCopied
           </div>
         )}
 
-        {!isUser && message.generation_time && (
+        {/* {!isUser && message.generation_time && (
           <p className="text-xs text-dark-500 mt-1">
             {message.tokens} tokens • {message.generation_time.toFixed(2)}s
           </p>
-        )}
+        )} */}
       </div>
     </motion.div>
   )
