@@ -31,6 +31,9 @@ from .routers.web import router as web_router
 from .routers.code import router as code_router
 from .routers.tasks import router as tasks_router
 from .routers.data import router as data_router
+from .routers.media import router as media_router
+from .routers.execute import router as execute_router
+from .routers.llm import router as llm_router
 
 # Configure logging
 logging.basicConfig(
@@ -142,6 +145,9 @@ app.include_router(web_router, prefix="/api/v1")
 app.include_router(code_router, prefix="/api/v1")
 app.include_router(tasks_router, prefix="/api/v1")
 app.include_router(data_router, prefix="/api/v1")
+app.include_router(media_router, prefix="/api/v1")
+app.include_router(execute_router, prefix="/api/v1")
+app.include_router(llm_router, prefix="/api/v1")
 
 
 # Root endpoint
