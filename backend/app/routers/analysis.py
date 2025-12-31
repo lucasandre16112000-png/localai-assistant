@@ -76,7 +76,7 @@ async def detect_objects(request: ObjectDetectionRequest):
 
 
 @router.post("/image/detect-faces")
-async def detect_faces(image_path: str = Query(...)):
+async def detect_faces(image_path: str = Body(...)):
     """
     Detectar rostos em imagem.
     
@@ -91,7 +91,7 @@ async def detect_faces(image_path: str = Query(...)):
 
 
 @router.post("/image/analyze")
-async def analyze_image(image_path: str = Query(...)):
+async def analyze_image(image_path: str = Body(...)):
     """
     Análise completa de imagem.
     
@@ -107,8 +107,8 @@ async def analyze_image(image_path: str = Query(...)):
 
 @router.post("/image/compare")
 async def compare_images(
-    image1_path: str = Query(...),
-    image2_path: str = Query(...)
+    image1_path: str = Body(...),
+    image2_path: str = Body(...)
 ):
     """
     Comparar duas imagens.
@@ -126,8 +126,8 @@ async def compare_images(
 
 @router.post("/image/extract-colors")
 async def extract_colors(
-    image_path: str = Query(...),
-    num_colors: int = Query(5, ge=1, le=20)
+    image_path: str = Body(...),
+    num_colors: int = Body(5, ge=1, le=20)
 ):
     """
     Extrair cores dominantes de imagem.
@@ -167,8 +167,8 @@ async def convert_video(request: VideoConvertRequest):
 
 @router.post("/video/extract-frames")
 async def extract_frames(
-    video_path: str = Query(...),
-    interval: int = Query(1, ge=1)
+    video_path: str = Body(...),
+    interval: int = Body(1, ge=1)
 ):
     """
     Extrair frames de vídeo.
@@ -186,8 +186,8 @@ async def extract_frames(
 
 @router.post("/video/extract-audio")
 async def extract_audio(
-    video_path: str = Query(...),
-    audio_format: str = Query("mp3")
+    video_path: str = Body(...),
+    audio_format: str = Body("mp3")
 ):
     """
     Extrair áudio de vídeo.
@@ -205,9 +205,9 @@ async def extract_audio(
 
 @router.post("/video/trim")
 async def trim_video(
-    video_path: str = Query(...),
-    start_time: str = Query(...),
-    end_time: str = Query(...)
+    video_path: str = Body(...),
+    start_time: str = Body(...),
+    end_time: str = Body(...)
 ):
     """
     Cortar vídeo.
@@ -225,7 +225,7 @@ async def trim_video(
 
 
 @router.post("/video/analyze")
-async def analyze_video(video_path: str = Query(...)):
+async def analyze_video(video_path: str = Body(...)):
     """
     Analisar vídeo.
     
@@ -261,8 +261,8 @@ async def statistical_analysis(request: DataAnalysisRequest):
 
 @router.post("/data/anomalies")
 async def detect_anomalies(
-    data: List[float] = Query(...),
-    method: str = Query("zscore")
+    data: List[float] = Body(...),
+    method: str = Body("zscore")
 ):
     """
     Detectar anomalias em dados.
