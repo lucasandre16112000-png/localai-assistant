@@ -151,6 +151,11 @@ const App: React.FC = () => {
         if (!activeConversationId) {
           setActiveConversation(conversationId)
         }
+        
+        // Invalidate queries to fetch the new message from the database
+        queryClient.invalidateQueries({ queryKey: ['conversation', conversationId] })
+        queryClient.invalidateQueries({ queryKey: ['conversations'] })
+        
       } else {
         const response = await sendMessage({
           conversation_id: activeConversationId || undefined,
@@ -167,8 +172,6 @@ const App: React.FC = () => {
         }
       }
 
-      queryClient.invalidateQueries({ queryKey: ['conversation', activeConversationId] })
-      queryClient.invalidateQueries({ queryKey: ['conversations'] })
     } catch (error) {
       console.error('Error sending message:', error)
       toast.error('Failed to send message')

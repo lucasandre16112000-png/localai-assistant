@@ -256,6 +256,17 @@ async def chat_completion_stream(
                 if chunk.get("done"):
                     total_tokens = chunk.get("eval_count", len(full_response.split()))
             
+            # Save assistant message to database
+            await conversation_service.add_message(
+                db,
+                conv_id,
+                role="assistant",
+                content=full_response,
+                model=model,
+                tokens=total_tokens,
+                generation_time=0, # Cannot calculate generation time easily in streaming
+            )
+            
             yield f"data: {json.dumps({'done': True, 'conversation_id': conv_uuid})}\n\n"
         
         return StreamingResponse(
