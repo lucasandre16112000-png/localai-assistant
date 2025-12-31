@@ -34,6 +34,10 @@ from .routers.data import router as data_router
 from .routers.media import router as media_router
 from .routers.execute import router as execute_router
 from .routers.llm import router as llm_router
+from .routers.docs import router as docs_router
+from .routers.projects import router as projects_router
+from .routers.files import router as files_router
+from .routers.analysis import router as analysis_router
 
 # Configure logging
 logging.basicConfig(
@@ -148,6 +152,10 @@ app.include_router(data_router, prefix="/api/v1")
 app.include_router(media_router, prefix="/api/v1")
 app.include_router(execute_router, prefix="/api/v1")
 app.include_router(llm_router, prefix="/api/v1")
+app.include_router(docs_router, prefix="/api/v1")
+app.include_router(projects_router, prefix="/api/v1")
+app.include_router(files_router, prefix="/api/v1")
+app.include_router(analysis_router, prefix="/api/v1")
 
 
 # Root endpoint
