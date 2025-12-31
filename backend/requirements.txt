@@ -28,7 +28,6 @@ python-multipart==0.0.6
 python-dotenv==1.0.0
 
 # Code Analysis
-ast==3.9.0
 pylint==3.0.3
 black==23.12.1
 isort==5.13.2
