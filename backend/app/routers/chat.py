@@ -271,7 +271,8 @@ async def chat_completion_stream(
             )
             
             # Send final completion signal with metadata
-            yield f"data: {json.dumps({\"done\": True, \"conversation_id\": conv_uuid, \"tokens\": total_tokens, \"generation_time\": generation_time})}\n\n"
+            final_data = json.dumps({"done": True, "conversation_id": conv_uuid, "tokens": total_tokens, "generation_time": generation_time})
+            yield f"data: {final_data}\n\n"
         
         return StreamingResponse(
             generate(),

@@ -1,5 +1,5 @@
 # LocalAI Assistant - Backend Dependencies
-# Author: Lucas Andre S
+# Author: Lucas Andre S & Manus AI
 
 # Core Framework
 fastapi==0.109.0
@@ -13,6 +13,11 @@ aiosqlite==0.19.0
 
 # HTTP Client
 httpx==0.26.0
+requests==2.31.0
+
+# Web Scraping & Parsing
+beautifulsoup4==4.12.2
+lxml==4.9.3
 
 # Security
 python-jose[cryptography]==3.3.0
@@ -22,18 +27,41 @@ passlib[bcrypt]==1.7.4
 python-multipart==0.0.6
 python-dotenv==1.0.0
 
-# Testing
-pytest==7.4.4
-pytest-asyncio==0.23.3
-httpx==0.26.0
-
-# Development
+# Code Analysis
+ast==3.9.0
+pylint==3.0.3
 black==23.12.1
 isort==5.13.2
 flake8==7.0.0
+
+# Testing
+pytest==7.4.4
+pytest-asyncio==0.23.3
 
 # Optional: Redis for caching
 # redis==5.0.1
 
 # Optional: LangChain for advanced orchestration
 # langchain==0.1.0
+
+# Optional: Image Generation
+# pillow==10.1.0
+# opencv-python==4.8.1.78
+
+# Optional: Audio Processing
+# pydub==0.25.1
+# librosa==0.10.0
+
+# Optional: Data Analysis
+# pandas==2.1.3
+# numpy==1.26.2
+# matplotlib==3.8.2
+# plotly==5.18.0
+
+# Optional: Automation
+# apscheduler==3.10.4
+# celery==5.3.4
+
+# Optional: LLM APIs
+# openai==1.3.0
+# anthropic==0.7.1

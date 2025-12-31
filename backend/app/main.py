@@ -27,6 +27,10 @@ from .routers import (
     models_router,
     prompts_router,
 )
+from .routers.web import router as web_router
+from .routers.code import router as code_router
+from .routers.tasks import router as tasks_router
+from .routers.data import router as data_router
 
 # Configure logging
 logging.basicConfig(
@@ -134,6 +138,10 @@ app.include_router(chat_router, prefix="/api/v1")
 app.include_router(conversations_router, prefix="/api/v1")
 app.include_router(models_router, prefix="/api/v1")
 app.include_router(prompts_router, prefix="/api/v1")
+app.include_router(web_router, prefix="/api/v1")
+app.include_router(code_router, prefix="/api/v1")
+app.include_router(tasks_router, prefix="/api/v1")
+app.include_router(data_router, prefix="/api/v1")
 
 
 # Root endpoint
