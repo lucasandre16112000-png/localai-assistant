@@ -234,6 +234,7 @@ async def chat_completion_stream(
         async def generate():
             full_response = ""
             total_tokens = 0
+            generation_time = 0
             
             async for chunk in llm_service.chat_stream(
                 messages=chat_messages,
@@ -246,15 +247,17 @@ async def chat_completion_stream(
                 content = chunk.get("message", {}).get("content", "") or chunk.get("response", "")
                 full_response += content
                 
-                data = {
-                    "content": content,
-                    "done": chunk.get("done", False),
-                    "conversation_id": conv_uuid,
-                }
-                yield f"data: {json.dumps(data)}\n\n"
+                if content:  # Only send non-empty content
+                    data = {
+                        "content": content,
+                        "done": False,
+                        "conversation_id": conv_uuid,
+                    }
+                    yield f"data: {json.dumps(data)}\n\n"
                 
                 if chunk.get("done"):
                     total_tokens = chunk.get("eval_count", len(full_response.split()))
+                    generation_time = chunk.get("generation_time", 0)
             
             # Save assistant message to database
             await conversation_service.add_message(
@@ -264,10 +267,11 @@ async def chat_completion_stream(
                 content=full_response,
                 model=model,
                 tokens=total_tokens,
-                generation_time=0, # Cannot calculate generation time easily in streaming
+                generation_time=generation_time,
             )
             
-            yield f"data: {json.dumps({'done': True, 'conversation_id': conv_uuid})}\n\n"
+            # Send final completion signal with metadata
+            yield f"data: {json.dumps({\"done\": True, \"conversation_id\": conv_uuid, \"tokens\": total_tokens, \"generation_time\": generation_time})}\n\n"
         
         return StreamingResponse(
             generate(),

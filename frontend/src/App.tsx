@@ -152,9 +152,12 @@ const App: React.FC = () => {
           setActiveConversation(conversationId)
         }
         
-        // Invalidate queries to fetch the new message from the database
-        queryClient.invalidateQueries({ queryKey: ['conversation', conversationId] })
-        queryClient.invalidateQueries({ queryKey: ['conversations'] })
+        // Invalidate queries to fetch the new messages from the database
+        // Use a small delay to ensure database has been updated
+        setTimeout(() => {
+          queryClient.invalidateQueries({ queryKey: ['conversation', conversationId] })
+          queryClient.invalidateQueries({ queryKey: ['conversations'] })
+        }, 300)
         
       } else {
         const response = await sendMessage({
@@ -170,6 +173,10 @@ const App: React.FC = () => {
         if (!activeConversationId) {
           setActiveConversation(response.conversation_id)
         }
+        
+        // Invalidate queries to fetch the new messages
+        queryClient.invalidateQueries({ queryKey: ['conversation', response.conversation_id] })
+        queryClient.invalidateQueries({ queryKey: ['conversations'] })
       }
 
     } catch (error) {

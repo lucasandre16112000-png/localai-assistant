@@ -141,6 +141,7 @@ export const sendMessageStream = async (
     const reader = response.body?.getReader()
     const decoder = new TextDecoder()
     let conversationId = ''
+    let isDone = false
 
     if (!reader) {
       throw new Error('Response body is not readable')
@@ -150,7 +151,10 @@ export const sendMessageStream = async (
       const { done, value } = await reader.read()
 
       if (done) {
-        onChunk('', true)
+        // Only call onChunk with done=true if we haven't already
+        if (!isDone) {
+          onChunk('', true)
+        }
         break
       }
 
@@ -160,12 +164,18 @@ export const sendMessageStream = async (
       for (const line of lines) {
         if (line.startsWith('data: ')) {
           try {
-            const data = JSON.parse(line.slice(6))
-            if (data.conversation_id) {
-              conversationId = data.conversation_id
+            const parsedData = JSON.parse(line.slice(6))
+            if (parsedData.conversation_id) {
+              conversationId = parsedData.conversation_id
             }
-            if (data.content) {
-              onChunk(data.content, false)
+            // Only send content chunks if they have content
+            if (parsedData.content && parsedData.content.trim()) {
+              onChunk(parsedData.content, false)
+            }
+            // Mark as done when we receive the done signal
+            if (parsedData.done && !parsedData.content) {
+              isDone = true
+              onChunk('', true)
             }
           } catch (e) {
             // Ignore parse errors
