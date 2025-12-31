@@ -38,6 +38,9 @@ from .routers.docs import router as docs_router
 from .routers.projects import router as projects_router
 from .routers.files import router as files_router
 from .routers.analysis import router as analysis_router
+from .routers.security import router as security_router
+from .routers.database import router as database_router
+from .routers.devops import router as devops_router
 
 # Configure logging
 logging.basicConfig(
@@ -156,6 +159,9 @@ app.include_router(docs_router, prefix="/api/v1")
 app.include_router(projects_router, prefix="/api/v1")
 app.include_router(files_router, prefix="/api/v1")
 app.include_router(analysis_router, prefix="/api/v1")
+app.include_router(security_router, prefix="/api/v1")
+app.include_router(database_router, prefix="/api/v1")
+app.include_router(devops_router, prefix="/api/v1")
 
 
 # Root endpoint
