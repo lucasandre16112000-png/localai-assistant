@@ -42,8 +42,10 @@ export const Chat: React.FC<ChatProps> = ({
 }) => {
   const [input, setInput] = React.useState('')
   const [copiedId, setCopiedId] = React.useState<string | null>(null)
+  const [attachedFiles, setAttachedFiles] = React.useState<File[]>([])
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const { activeModel } = useStore()
 
   useEffect(() => {
@@ -69,7 +71,19 @@ export const Chat: React.FC<ChatProps> = ({
   }
 
   const handleAttachFile = () => {
-    toast.success('File attachment feature coming soon!')
+    fileInputRef.current?.click()
+  }
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || [])
+    if (files.length > 0) {
+      setAttachedFiles([...attachedFiles, ...files])
+      toast.success(`${files.length} file(s) attached`)
+    }
+  }
+
+  const handleRemoveFile = (index: number) => {
+    setAttachedFiles(attachedFiles.filter((_, i) => i !== index))
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -158,6 +172,13 @@ export const Chat: React.FC<ChatProps> = ({
               className="w-full bg-dark-800/50 border border-dark-600 rounded-2xl px-4 py-4 pr-32 text-dark-100 placeholder-dark-400 resize-none focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all duration-200"
               disabled={isGenerating}
             />
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              className="hidden"
+              onChange={handleFileSelect}
+            />
             <div className="absolute right-2 bottom-2 flex items-center gap-2">
               <button
                 type="button"
@@ -178,6 +199,25 @@ export const Chat: React.FC<ChatProps> = ({
               </Button>
             </div>
           </div>
+          {attachedFiles.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-2">
+              {attachedFiles.map((file, index) => (
+                <div
+                  key={index}
+                  className="bg-dark-700/50 rounded-lg px-3 py-2 flex items-center gap-2 text-sm text-dark-300"
+                >
+                  <span className="truncate max-w-xs">{file.name}</span>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveFile(index)}
+                    className="text-dark-500 hover:text-dark-200 transition-colors"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
           <p className="text-xs text-dark-500 text-center mt-2">
             Using <span className="text-primary-400 font-medium">{activeModel}</span> • Press Enter to send, Shift+Enter for new line
           </p>
