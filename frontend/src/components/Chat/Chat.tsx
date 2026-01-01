@@ -28,6 +28,7 @@ import toast from 'react-hot-toast'
 interface ChatProps {
   messages: Message[]
   onSendMessage: (content: string) => void
+  onStopGeneration?: () => void
   isGenerating: boolean
   streamingContent: string
 }
@@ -35,6 +36,7 @@ interface ChatProps {
 export const Chat: React.FC<ChatProps> = ({
   messages,
   onSendMessage,
+  onStopGeneration,
   isGenerating,
   streamingContent,
 }) => {
@@ -57,9 +59,17 @@ export const Chat: React.FC<ChatProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!input.trim() || isGenerating) return
+    if (isGenerating) {
+      onStopGeneration?.()
+      return
+    }
+    if (!input.trim()) return
     onSendMessage(input.trim())
     setInput('')
+  }
+
+  const handleAttachFile = () => {
+    toast.success('File attachment feature coming soon!')
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -151,6 +161,7 @@ export const Chat: React.FC<ChatProps> = ({
             <div className="absolute right-2 bottom-2 flex items-center gap-2">
               <button
                 type="button"
+                onClick={handleAttachFile}
                 className="p-2 rounded-xl text-dark-400 hover:text-dark-200 hover:bg-dark-700/50 transition-colors"
                 title="Attach file"
               >

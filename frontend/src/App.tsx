@@ -18,6 +18,7 @@ import {
   deleteConversation,
   sendMessage,
   sendMessageStream,
+  stopMessageStream,
   getModels,
 } from './lib/api'
 
@@ -121,6 +122,13 @@ const App: React.FC = () => {
 
   const handleDeleteConversation = (uuid: string) => {
     deleteConversationMutation.mutate(uuid)
+  }
+
+  const handleStopGeneration = () => {
+    stopMessageStream()
+    setIsGenerating(false)
+    setStreamingContent('')
+    toast.success('Generation stopped')
   }
 
   const handleSendMessage = async (content: string) => {
@@ -228,6 +236,7 @@ const App: React.FC = () => {
                 <Chat
                   messages={messages}
                   onSendMessage={handleSendMessage}
+                  onStopGeneration={handleStopGeneration}
                   isGenerating={isGenerating}
                   streamingContent={streamingContent}
                 />

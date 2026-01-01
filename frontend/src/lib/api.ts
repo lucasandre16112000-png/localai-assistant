@@ -121,17 +121,21 @@ export const sendMessage = async (
   }
 }
 
+export let abortController: AbortController | null = null
+
 export const sendMessageStream = async (
   data: SendMessageRequest,
   onChunk: (chunk: string, done: boolean) => void
 ): Promise<string> => {
   try {
+    abortController = new AbortController()
     const response = await fetch(`${API_BASE_URL}/chat/completions/stream`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
+      signal: abortController.signal,
     })
 
     if (!response.ok) {
@@ -186,8 +190,21 @@ export const sendMessageStream = async (
 
     return conversationId
   } catch (error) {
-    console.error('Error in stream:', error)
+    if (error instanceof Error && error.name === 'AbortError') {
+      console.log('Stream aborted by user')
+    } else {
+      console.error('Error in stream:', error)
+    }
     throw error
+  } finally {
+    abortController = null
+  }
+}
+
+export const stopMessageStream = () => {
+  if (abortController) {
+    abortController.abort()
+    abortController = null
   }
 }
 
