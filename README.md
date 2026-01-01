@@ -1,8 +1,8 @@
 <div align="center">
 
-# 🤖 LocalAI Assistant
+# 🤖 LocalAI Assistant - MANUS Ultra Advanced
 
-### Premium AI Assistant with Local LLM Support
+### Premium AI Assistant with Local LLM Support & Maximum Capabilities
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Python](https://img.shields.io/badge/Python-3.11+-green.svg)](https://python.org)
@@ -13,10 +13,10 @@
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg)](https://docker.com)
 
 <p align="center">
-  <strong>Um assistente de IA moderno e de nível enterprise com interface premium e funcionalidades poderosas.</strong>
+  <strong>Um assistente de IA moderno e de nível enterprise com interface premium, máximas capacidades de programação e execução autônoma.</strong>
 </p>
 
-[Funcionalidades](#-funcionalidades) • [Screenshots](#-screenshots) • [Instalação](#-instalação-passo-a-passo) • [Como Usar](#-como-usar) • [API](#-documentação-da-api) • [Troubleshooting](#-troubleshooting)
+[Funcionalidades](#-funcionalidades) • [Como Rodar](#-como-rodar-do-zero) • [Como Usar](#-como-usar) • [API](#-documentação-da-api) • [Troubleshooting](#-troubleshooting)
 
 </div>
 
@@ -32,12 +32,17 @@
 - **Animações Suaves** - Interações com Framer Motion
 - **Design Responsivo** - Mobile-first, funciona em todos os dispositivos
 
-### 🤖 Capacidades de IA
-- **Suporte a LLM Local** - Execute modelos localmente com Ollama
-- **Múltiplos Modelos** - Alterne entre diferentes modelos de IA
-- **Streaming de Respostas** - Streaming de tokens em tempo real
-- **Parâmetros Customizáveis** - Controles de Temperature, Top-P, Top-K
-- **System Prompts** - Templates de prompts pré-construídos e customizados
+### 🤖 Capacidades de IA - MANUS Ultra Advanced
+- **Execução de Comandos** - Bash, PowerShell, Python, Node.js, Java, C++, Go, Rust, etc
+- **Acesso à Internet** - APIs, web scraping, downloads, requisições HTTP
+- **Git Completo** - Clone, commit, push, merge, tudo automatizado
+- **Banco de Dados** - SQL, NoSQL, migrations, backups
+- **Desenvolvimento Full-Stack** - Frontend, backend, database
+- **DevOps** - Docker, Kubernetes, AWS, Azure, GCP
+- **Machine Learning** - Treinar modelos, análise de dados
+- **Segurança** - Análise de vulnerabilidades, penetration testing
+- **Raciocínio Crítico** - Análise profunda e lógica
+- **Autonomia Total** - Sem limitações artificiais
 
 ### 💬 Funcionalidades do Chat
 - **Gerenciamento de Conversas** - Criar, editar, deletar conversas
@@ -45,6 +50,7 @@
 - **Syntax Highlighting** - Destaque de código para 100+ linguagens
 - **Renderização Markdown** - Formatação de texto rica
 - **Copiar para Clipboard** - Cópia de código com um clique
+- **Streaming de Respostas** - Streaming de tokens em tempo real
 
 ### 📊 Dashboard de Analytics
 - **Estatísticas de Uso** - Acompanhe conversas, mensagens, tokens
@@ -54,31 +60,11 @@
 
 ---
 
-## 📸 Screenshots
+## 🚀 Como Rodar do Zero
 
-<div align="center">
+### ⚠️ Pré-requisitos
 
-### Dashboard
-![Dashboard](screenshots/dashboard.jpg)
-*Dashboard premium de analytics com estatísticas em tempo real*
-
-### Interface de Chat
-![Chat](screenshots/chat.jpg)
-*Interface de chat moderna com streaming de respostas*
-
-### Configurações
-![Settings](screenshots/settings.jpg)
-*Configurações completas com configuração de modelos*
-
-</div>
-
----
-
-## 🚀 Instalação Passo a Passo
-
-### Pré-requisitos
-
-Antes de começar, você precisa ter instalado:
+Certifique-se de que tem instalado:
 
 | Software | Versão | Link para Download |
 |----------|--------|-------------------|
@@ -86,11 +72,10 @@ Antes de começar, você precisa ter instalado:
 | **Node.js** | 20 ou superior | [nodejs.org](https://nodejs.org) |
 | **Ollama** | Última versão | [ollama.ai](https://ollama.ai) |
 | **Git** | Qualquer versão | [git-scm.com](https://git-scm.com) |
-| **Docker** | (Opcional) | [docker.com](https://docker.com) |
 
 ---
 
-### 📥 Passo 1: Instalar o Ollama
+## 📋 PASSO 1: Instalar o Ollama
 
 O Ollama é o software que roda os modelos de IA no seu computador.
 
@@ -102,10 +87,7 @@ O Ollama é o software que roda os modelos de IA no seu computador.
 
 **macOS:**
 ```bash
-# Via Homebrew
 brew install ollama
-
-# Ou baixe diretamente de ollama.ai
 ```
 
 **Linux:**
@@ -115,7 +97,7 @@ curl -fsSL https://ollama.ai/install.sh | sh
 
 ---
 
-### 📥 Passo 2: Baixar um Modelo de IA
+## 📋 PASSO 2: Baixar um Modelo de IA
 
 Abra o terminal/prompt de comando e execute:
 
@@ -134,98 +116,107 @@ ollama pull wizardlm-uncensored
 
 ---
 
-### 📥 Passo 3: Clonar o Repositório
+## 📋 PASSO 3: Clonar o Repositório
 
-```bash
-# Clone o projeto
+Abra um CMD e execute:
+
+```cmd
+cd %USERPROFILE%\Desktop
 git clone https://github.com/lucasandre16112000-png/localai-assistant.git
-
-# Entre na pasta do projeto
 cd localai-assistant
 ```
 
 ---
 
-### 📥 Passo 4: Configurar Variáveis de Ambiente
+## 📋 PASSO 4: Abra um CMD NOVO e execute (Backend)
 
-```bash
-# Copie o arquivo de exemplo
-cp .env.example .env
-```
-
-Edite o arquivo `.env` se necessário (os valores padrão funcionam para a maioria dos casos).
-
----
-
-### 📥 Passo 5: Iniciar o Backend
-
-**Opção A - Com Docker (Recomendado):**
-```bash
-docker-compose up -d
-```
-
-**Opção B - Manualmente:**
-
-Abra um terminal e execute:
-```bash
-# Entre na pasta do backend
+```cmd
+cd %USERPROFILE%\Desktop\localai-assistant
+git stash
+git pull
 cd backend
-
-# Crie um ambiente virtual
+rmdir /s /q venv
 python -m venv venv
-
-# Ative o ambiente virtual
-# Windows:
 venv\Scripts\activate
-# Linux/macOS:
-source venv/bin/activate
-
-# Instale as dependências
+pip install --upgrade pip setuptools wheel
 pip install -r requirements.txt
-
-# Inicie o servidor
-uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-Você verá uma mensagem como:
+⏳ **Aguarde até terminar a instalação** (pode levar 2-5 minutos)
+
+Quando terminar, execute:
+
+```cmd
+python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+Você verá:
 ```
 INFO:     Uvicorn running on http://0.0.0.0:8000
+INFO:     Started reloader process
 ```
+
+✅ **DEIXE ESSE TERMINAL ABERTO!**
 
 ---
 
-### 📥 Passo 6: Iniciar o Frontend
+## 📋 PASSO 5: Abra um SEGUNDO CMD NOVO e execute (Frontend)
 
-Abra **outro terminal** (mantenha o backend rodando) e execute:
-
-```bash
-# Entre na pasta do frontend
-cd frontend
-
-# Instale as dependências
+```cmd
+cd %USERPROFILE%\Desktop\localai-assistant\frontend
 npm install
-# ou se preferir pnpm:
-pnpm install
-
-# Inicie o servidor de desenvolvimento
-npm run dev
-# ou:
-pnpm dev
 ```
 
-Você verá uma mensagem como:
+⏳ **Aguarde até terminar** (pode levar 1-3 minutos)
+
+Quando terminar, execute:
+
+```cmd
+npm run dev
+```
+
+Você verá:
 ```
 VITE v5.x.x  ready in xxx ms
+
 ➜  Local:   http://localhost:3000/
+➜  press h to show help
 ```
+
+✅ **DEIXE ESSE TERMINAL ABERTO!**
 
 ---
 
-### 📥 Passo 7: Acessar a Aplicação
+## 📋 PASSO 6: Abra um TERCEIRO CMD NOVO e execute (Ollama)
 
-1. Abra seu navegador
-2. Acesse: **http://localhost:3000**
-3. Pronto! Você verá a interface do LocalAI Assistant
+```cmd
+ollama serve
+```
+
+Você verá:
+```
+time=2026-01-01T... level=INFO msg="Listening on 127.0.0.1:11434"
+```
+
+✅ **DEIXE ESSE TERMINAL ABERTO!**
+
+---
+
+## 🌐 PASSO 7: Abra seu navegador e acesse
+
+👉 **http://localhost:3000/**
+
+---
+
+## ✨ RESUMO - 3 TERMINAIS ABERTOS
+
+Você deve ter **3 terminais CMD abertos** ao mesmo tempo:
+
+| Terminal | Comando | Porta | Status |
+|----------|---------|-------|--------|
+| **1º** | `python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000` | 8000 | ✅ Backend |
+| **2º** | `npm run dev` | 3000 | ✅ Frontend |
+| **3º** | `ollama serve` | 11434 | ✅ Ollama |
 
 ---
 
@@ -238,13 +229,17 @@ VITE v5.x.x  ready in xxx ms
 3. Pressione **Enter** ou clique em **Send**
 4. Aguarde a resposta da IA (aparece em tempo real!)
 
-### Exemplos de Perguntas
+### Exemplos de Tarefas que Você Pode Pedir
 
 ```
-- "Explique como funciona o algoritmo QuickSort em Python"
-- "Escreva uma função para calcular o fatorial de um número"
-- "Crie um componente React para um formulário de login"
-- "Me ajude a debugar este código: [cole seu código]"
+- "Clone o repositório X e corrija todos os bugs"
+- "Crie uma API REST com autenticação e banco de dados"
+- "Analise este código e otimize a performance"
+- "Encontre e corrija vulnerabilidades de segurança"
+- "Construa um modelo de machine learning com este dataset"
+- "Configure um pipeline CI/CD para meu projeto"
+- "Faça deploy da aplicação na AWS"
+- "Refatore este código seguindo best practices"
 ```
 
 ### Usando o Dashboard
@@ -302,23 +297,32 @@ Quando o backend estiver rodando, acesse:
 
 ## ❓ Troubleshooting
 
+### Problema: "Porta 8000 já está em uso"
+
+**Solução:**
+```cmd
+netstat -ano | findstr :8000
+taskkill /PID <PID> /F
+```
+
+### Problema: "Porta 3000 já está em uso"
+
+**Solução:**
+```cmd
+netstat -ano | findstr :3000
+taskkill /PID <PID> /F
+```
+
 ### Problema: "Ollama não está respondendo"
 
 **Solução:**
-1. Verifique se o Ollama está rodando:
-   ```bash
-   ollama list
-   ```
-2. Se não estiver, inicie-o:
-   ```bash
-   ollama serve
-   ```
+1. Verifique se o Ollama está rodando
+2. Se não estiver, inicie-o com `ollama serve`
 
 ### Problema: "Modelo não encontrado"
 
 **Solução:**
 ```bash
-# Baixe o modelo
 ollama pull dolphin-mistral
 ```
 
@@ -364,9 +368,9 @@ localai-assistant/
 │   │   ├── styles/         # Estilos globais
 │   │   └── App.tsx         # Componente principal
 │   └── package.json        # Dependências Node.js
-├── screenshots/            # Screenshots do projeto
 ├── docker-compose.yml      # Configuração Docker
 ├── .env.example            # Exemplo de variáveis de ambiente
+├── RODAR_PROJETO.md        # Guia completo de execução
 └── README.md               # Este arquivo
 ```
 
