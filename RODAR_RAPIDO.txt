@@ -1,0 +1,58 @@
+================================================================================
+🚀 COMO RODAR O LOCALAI ASSISTANT - FORMA RÁPIDA
+================================================================================
+
+PRÉ-REQUISITOS INSTALADOS:
+✅ Python 3.11+
+✅ Node.js 20+
+✅ Git
+✅ Ollama (com modelo dolphin-mistral baixado)
+
+================================================================================
+
+PASSO 1: Abra o PRIMEIRO CMD e copie/cole TUDO:
+
+cd %USERPROFILE%\Desktop\localai-assistant
+cd backend
+python -m venv venv
+venv\Scripts\activate
+pip install --upgrade pip setuptools wheel
+pip install -r requirements.txt
+python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+
+✅ DEIXE ABERTO!
+
+================================================================================
+
+PASSO 2: Abra um SEGUNDO CMD NOVO e copie/cole TUDO:
+
+cd %USERPROFILE%\Desktop\localai-assistant\frontend
+npm install
+npm run dev
+
+✅ DEIXE ABERTO!
+
+================================================================================
+
+PASSO 3: Abra um TERCEIRO CMD NOVO e copie/cole:
+
+ollama serve
+
+✅ DEIXE ABERTO!
+
+================================================================================
+
+PASSO 4: Abra seu navegador e acesse:
+
+http://localhost:3000/
+
+================================================================================
+
+✅ PRONTO! O projeto está rodando!
+
+Você deve ter 3 terminais CMD abertos:
+  Terminal 1: Backend (porta 8000)
+  Terminal 2: Frontend (porta 3000)
+  Terminal 3: Ollama (porta 11434)
+
+================================================================================

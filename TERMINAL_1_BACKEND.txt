@@ -1,0 +1,31 @@
+================================================================================
+TERMINAL 1 - BACKEND
+================================================================================
+
+INSTRUÇÕES:
+1. Abra um Prompt de Comando (CMD)
+2. Copie e cole TODOS os comandos abaixo, um por um
+3. Pressione Enter após cada comando
+4. DEIXE ESTE TERMINAL ABERTO!
+
+================================================================================
+
+cd %USERPROFILE%\Desktop\localai-assistant
+cd backend
+python -m venv venv
+venv\Scripts\activate
+pip install --upgrade pip setuptools wheel
+pip install -r requirements.txt
+python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+
+================================================================================
+
+✅ PRONTO! O backend está rodando na porta 8000
+
+Você verá mensagens como:
+  INFO:     Uvicorn running on http://0.0.0.0:8000
+  INFO:     Started reloader process
+
+DEIXE ESTE TERMINAL ABERTO! Não feche!
+
+================================================================================

@@ -1,0 +1,27 @@
+================================================================================
+TERMINAL 2 - FRONTEND
+================================================================================
+
+INSTRUÇÕES:
+1. Abra um NOVO Prompt de Comando (CMD) - DIFERENTE DO PRIMEIRO!
+2. Copie e cole TODOS os comandos abaixo, um por um
+3. Pressione Enter após cada comando
+4. DEIXE ESTE TERMINAL ABERTO!
+
+================================================================================
+
+cd %USERPROFILE%\Desktop\localai-assistant\frontend
+npm install
+npm run dev
+
+================================================================================
+
+✅ PRONTO! O frontend está rodando na porta 3000
+
+Você verá mensagens como:
+  VITE v5.x.x  ready in xxx ms
+  ➜  Local:   http://localhost:3000/
+
+DEIXE ESTE TERMINAL ABERTO! Não feche!
+
+================================================================================
