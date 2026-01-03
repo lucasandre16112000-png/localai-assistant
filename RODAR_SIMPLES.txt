@@ -1,0 +1,22 @@
+ABRA 3 TERMINAIS (CMD) E COPIE/COLE OS COMANDOS:
+
+=== TERMINAL 1 (BACKEND) ===
+cd %USERPROFILE%\Desktop\localai-assistant
+cd backend
+rmdir /s /q venv
+python -m venv venv
+venv\Scripts\activate
+pip install --upgrade pip setuptools wheel
+pip install -r requirements.txt
+python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+
+=== TERMINAL 2 (FRONTEND) ===
+cd %USERPROFILE%\Desktop\localai-assistant\frontend
+npm install
+npm run dev
+
+=== TERMINAL 3 (OLLAMA) ===
+ollama serve
+
+=== NAVEGADOR ===
+http://localhost:3000/
