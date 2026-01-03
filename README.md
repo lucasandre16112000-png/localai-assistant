@@ -104,26 +104,7 @@ VITE v4.x.x  ready in xxx ms
 
 ---
 
-### **PASSO 4: Rodar o Ollama (Terceiro Terminal)**
-
-Abra um **NOVO CMD** e copie/cole:
-
-```cmd
-ollama serve
-```
-
-**Pressione ENTER uma única vez após colar**
-
-**Você verá algo assim quando funcionar:**
-```
-time=2024-01-03T10:00:00.000Z level=INFO msg="Listening on 127.0.0.1:11434"
-```
-
-✅ **DEIXE ESTE TERMINAL ABERTO!**
-
----
-
-### **PASSO 5: Acessar no Navegador**
+### **PASSO 4: Acessar no Navegador**
 
 Abra seu navegador (Chrome, Firefox, Edge, etc.) e acesse:
 
@@ -132,32 +113,6 @@ http://localhost:3000/
 ```
 
 🎉 **Pronto! O LocalAI Assistant está rodando!**
-
----
-
-## 🧪 Testando as Funcionalidades
-
-### **Teste 1: Enviar uma Mensagem**
-1. Digite uma pergunta no campo de chat
-2. Clique em "Send" ou pressione Enter
-3. A IA deve responder em tempo real
-
-### **Teste 2: Botão STOP**
-1. Envie uma mensagem longa
-2. Enquanto a IA está respondendo, clique no botão "Stop"
-3. A resposta deve parar imediatamente
-4. A resposta parcial deve ser salva
-
-### **Teste 3: Histórico de Conversas**
-1. Crie uma nova conversa (clique em "New Chat")
-2. Envie algumas mensagens
-3. Observe na barra lateral esquerda - as conversas devem aparecer
-4. Recarregue a página - as conversas devem continuar lá
-
-### **Teste 4: Múltiplas Conversas**
-1. Crie 2 conversas diferentes
-2. Envie mensagens diferentes em cada uma
-3. Clique entre elas - cada uma deve manter seu histórico
 
 ---
 
