@@ -50,12 +50,17 @@ async def stop_generation(
     """
     if conversation_id:
         stopped_generations.add(conversation_id)
-        logger.info(f"Stop requested for conversation: {conversation_id}")
-    
-    return {
-        "status": "success",
-        "message": "Generation stopped successfully"
-    }
+        logger.info(f"✅ STOP requested for conversation: {conversation_id}")
+        return {
+            "status": "success",
+            "message": f"Generation stopped successfully for {conversation_id}"
+        }
+    else:
+        logger.warning("Stop requested but no conversation_id provided")
+        return {
+            "status": "error",
+            "message": "No conversation_id provided"
+        }
 
 @router.post("/completions", response_model=ChatResponse)
 async def chat_completion(
@@ -87,7 +92,7 @@ async def chat_completion(
         
         # Store conversation data
         conv_id = conversation.id
-        conv_uuid = conversation.uuid
+        conv_uuid = str(conversation.uuid)  # Convert to string for comparison
         conv_model = conversation.model
         conv_temp = conversation.temperature
         conv_top_p = conversation.top_p
@@ -234,7 +239,7 @@ async def chat_completion_stream(
         
         # Store conversation data
         conv_id = conversation.id
-        conv_uuid = conversation.uuid
+        conv_uuid = str(conversation.uuid)  # Convert to string for comparison
         conv_model = conversation.model
         conv_temp = conversation.temperature
         conv_top_p = conversation.top_p

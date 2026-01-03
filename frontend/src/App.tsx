@@ -67,13 +67,17 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (conversationsData && Array.isArray(conversationsData)) {
+      console.log('✅ Setting conversations:', conversationsData.length)
       setConversations(conversationsData)
+    } else {
+      console.warn('❌ conversationsData is not an array:', conversationsData)
     }
   }, [conversationsData, setConversations])
 
   // Auto-select first conversation if none is selected
   useEffect(() => {
     if (conversationsData && conversationsData.length > 0 && !activeConversationId) {
+      console.log('✅ Auto-selecting first conversation:', conversationsData[0].uuid)
       setActiveConversation(conversationsData[0].uuid)
     }
   }, [conversationsData, activeConversationId, setActiveConversation])
@@ -134,7 +138,7 @@ const App: React.FC = () => {
 
   const handleStopGeneration = async () => {
     try {
-      stopMessageStream()
+      stopMessageStream(activeConversationId || undefined)
       setIsGenerating(false)
       
       // Invalidate queries to refresh the conversation with the partial response

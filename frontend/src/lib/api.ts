@@ -71,9 +71,11 @@ export interface DashboardStats {
 export const getConversations = async (): Promise<Conversation[]> => {
   try {
     const response = await apiClient.get<{ conversations: Conversation[] }>('/conversations/')
-    return response.data.conversations || []
+    const conversations = response.data.conversations || []
+    console.log('✅ Fetched conversations:', conversations.length, conversations)
+    return conversations
   } catch (error) {
-    console.error('Error fetching conversations:', error)
+    console.error('❌ Error fetching conversations:', error)
     return []
   }
 }
@@ -201,7 +203,7 @@ export const sendMessageStream = async (
   }
 }
 
-export const stopMessageStream = async () => {
+export const stopMessageStream = async (conversationId?: string) => {
   if (abortController) {
     abortController.abort()
     abortController = null
@@ -209,7 +211,9 @@ export const stopMessageStream = async () => {
   
   // Notify backend that generation was stopped
   try {
-    await apiClient.post('/chat/stop-generation')
+    const params = conversationId ? `?conversation_id=${conversationId}` : ''
+    await apiClient.post(`/chat/stop-generation${params}`)
+    console.log('✅ Stop signal sent to backend for conversation:', conversationId)
   } catch (error) {
     console.error('Error notifying backend of stop:', error)
   }
