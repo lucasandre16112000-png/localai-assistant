@@ -5,11 +5,12 @@ TERMINAL 3 - OLLAMA
 INSTRUÇÕES:
 1. Abra um NOVO Prompt de Comando (CMD) - DIFERENTE DOS ANTERIORES!
 2. Copie e cole o comando abaixo
-3. Pressione Enter
+3. PRESSIONE ENTER
 4. DEIXE ESTE TERMINAL ABERTO!
 
 ================================================================================
 
+COMANDO - Pressione Enter após colar:
 ollama serve
 
 ================================================================================
