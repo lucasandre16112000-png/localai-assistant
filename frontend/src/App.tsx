@@ -47,10 +47,11 @@ const App: React.FC = () => {
     settings,
   } = useStore()
 
-  const { data: conversationsData } = useQuery({
+  const { data: conversationsData, isLoading: isLoadingConversations } = useQuery({
     queryKey: ['conversations'],
     queryFn: getConversations,
     refetchInterval: 30000,
+    staleTime: 5000,
   })
 
   const { data: modelsData } = useQuery({
@@ -65,10 +66,17 @@ const App: React.FC = () => {
   })
 
   useEffect(() => {
-    if (conversationsData) {
+    if (conversationsData && Array.isArray(conversationsData)) {
       setConversations(conversationsData)
     }
   }, [conversationsData, setConversations])
+
+  // Auto-select first conversation if none is selected
+  useEffect(() => {
+    if (conversationsData && conversationsData.length > 0 && !activeConversationId) {
+      setActiveConversation(conversationsData[0].uuid)
+    }
+  }, [conversationsData, activeConversationId, setActiveConversation])
 
   useEffect(() => {
     if (modelsData?.models) {
@@ -124,11 +132,25 @@ const App: React.FC = () => {
     deleteConversationMutation.mutate(uuid)
   }
 
-  const handleStopGeneration = () => {
-    stopMessageStream()
-    setIsGenerating(false)
-    setStreamingContent('')
-    toast.success('Generation stopped')
+  const handleStopGeneration = async () => {
+    try {
+      stopMessageStream()
+      setIsGenerating(false)
+      
+      // Invalidate queries to refresh the conversation with the partial response
+      if (activeConversationId) {
+        setTimeout(() => {
+          queryClient.invalidateQueries({ queryKey: ['conversation', activeConversationId] })
+          queryClient.invalidateQueries({ queryKey: ['conversations'] })
+        }, 100)
+      }
+      
+      setStreamingContent('')
+      toast.success('Generation stopped')
+    } catch (error) {
+      console.error('Error stopping generation:', error)
+      toast.error('Failed to stop generation')
+    }
   }
 
   const handleSendMessage = async (content: string) => {
@@ -165,7 +187,7 @@ const App: React.FC = () => {
         setTimeout(() => {
           queryClient.invalidateQueries({ queryKey: ['conversation', conversationId] })
           queryClient.invalidateQueries({ queryKey: ['conversations'] })
-        }, 300)
+        }, 500)
         
       } else {
         const response = await sendMessage({
@@ -183,8 +205,10 @@ const App: React.FC = () => {
         }
         
         // Invalidate queries to fetch the new messages
-        queryClient.invalidateQueries({ queryKey: ['conversation', response.conversation_id] })
-        queryClient.invalidateQueries({ queryKey: ['conversations'] })
+        setTimeout(() => {
+          queryClient.invalidateQueries({ queryKey: ['conversation', response.conversation_id] })
+          queryClient.invalidateQueries({ queryKey: ['conversations'] })
+        }, 500)
       }
 
     } catch (error) {

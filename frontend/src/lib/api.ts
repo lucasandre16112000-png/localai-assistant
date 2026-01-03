@@ -201,10 +201,17 @@ export const sendMessageStream = async (
   }
 }
 
-export const stopMessageStream = () => {
+export const stopMessageStream = async () => {
   if (abortController) {
     abortController.abort()
     abortController = null
+  }
+  
+  // Notify backend that generation was stopped
+  try {
+    await apiClient.post('/chat/stop-generation')
+  } catch (error) {
+    console.error('Error notifying backend of stop:', error)
   }
 }
 

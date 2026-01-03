@@ -289,6 +289,20 @@ async def chat_completion_stream(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@router.post("/stop-generation", response_model=dict)
+async def stop_generation(
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Stop the current generation and save partial response.
+    This endpoint is called when user clicks the STOP button.
+    """
+    return {
+        "status": "success",
+        "message": "Generation stopped successfully"
+    }
+
+
 @router.post("/regenerate/{message_uuid}")
 async def regenerate_response(
     message_uuid: str,

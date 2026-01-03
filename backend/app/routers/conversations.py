@@ -43,7 +43,7 @@ async def create_conversation(
     return conversation
 
 
-@router.get("/", response_model=List[ConversationResponse])
+@router.get("/", response_model=dict)
 async def list_conversations(
     skip: int = Query(0, ge=0),
     limit: int = Query(50, ge=1, le=100),
@@ -60,7 +60,7 @@ async def list_conversations(
     conversations = await conversation_service.list_conversations(
         db, skip=skip, limit=limit, include_archived=include_archived
     )
-    return conversations
+    return {"conversations": conversations}
 
 
 @router.get("/stats", response_model=DashboardStats)
