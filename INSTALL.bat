@@ -80,21 +80,34 @@ start "LocalAI Backend" cmd /k "pip install -q -r requirements.txt && python -m 
 
 REM Wait for backend to start
 echo Waiting for backend to start...
-timeout /t 10 /nobreak >nul
+timeout /t 15 /nobreak >nul
 
 REM Start frontend in separate window
 cd /d "%installPath%\frontend"
 start "LocalAI Frontend" cmd /k "npm install --no-fund -q && npm run dev"
 
-REM Wait for frontend to start
-echo Waiting for frontend to start...
-timeout /t 10 /nobreak >nul
+REM Wait for frontend to start and be ready
+echo Waiting for frontend to start and be ready...
+timeout /t 15 /nobreak >nul
 
-REM Open browser
+REM Check if frontend is ready by testing the port
+echo Checking if frontend is ready...
+set "counter=0"
+:check_frontend
+netstat -ano | find ":3000" >nul 2>&1
+if errorlevel 1 (
+    set /a counter=!counter!+1
+    if !counter! lss 30 (
+        timeout /t 2 /nobreak >nul
+        goto check_frontend
+    )
+)
+
+REM Open browser only when frontend is ready
 echo.
 echo ================================================================================
 echo.
-echo                    OPENING BROWSER...
+echo                    FRONTEND IS READY - OPENING BROWSER...
 echo.
 echo ================================================================================
 echo.
