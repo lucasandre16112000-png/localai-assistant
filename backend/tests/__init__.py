@@ -1,3 +1,0 @@
-"""
-LocalAI Assistant - Tests Package
-"""

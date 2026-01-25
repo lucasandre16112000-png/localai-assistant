@@ -1,3 +1,0 @@
-cd %USERPROFILE%\Desktop\localai-assistant\frontend
-npm install
-npm run dev
