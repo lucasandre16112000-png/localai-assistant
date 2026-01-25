@@ -18,24 +18,19 @@ set "zipPath=%TEMP%\localai-assistant.zip"
 set "extractPath=%TEMP%\localai-extract"
 
 REM Step 1: Create installation folder
-echo [1/8] Creating installation folder...
+echo [1/7] Creating installation folder...
 if not exist "%installPath%" mkdir "%installPath%"
-if errorlevel 1 (
-    echo [ERROR] Failed to create folder
-    pause
-    exit /b 1
-)
 echo [OK] Folder created at: %installPath%
 echo.
 
 REM Step 2: Download project from GitHub
-echo [2/8] Downloading project from GitHub...
+echo [2/7] Downloading project from GitHub...
 powershell -Command "try { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; (New-Object System.Net.WebClient).DownloadFile('https://github.com/lucasandre16112000-png/localai-assistant/archive/refs/heads/main.zip', '%zipPath%'); Write-Host '[OK] Project downloaded' } catch { Write-Host '[ERROR] Failed to download'; exit 1 }"
 if errorlevel 1 goto error_download
 echo.
 
 REM Step 3: Extract files
-echo [3/8] Extracting files...
+echo [3/7] Extracting files...
 if exist "%extractPath%" rmdir /s /q "%extractPath%" >nul 2>&1
 mkdir "%extractPath%"
 powershell -Command "try { Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::ExtractToDirectory('%zipPath%', '%extractPath%'); Write-Host '[OK] Files extracted' } catch { Write-Host '[ERROR] Failed to extract'; exit 1 }"
@@ -43,65 +38,46 @@ if errorlevel 1 goto error_extract
 echo.
 
 REM Step 4: Copy files to permanent location
-echo [4/8] Copying files to permanent location...
+echo [4/7] Copying files to permanent location...
 if exist "%installPath%\*" rmdir /s /q "%installPath%" >nul 2>&1
 mkdir "%installPath%"
 xcopy "%extractPath%\localai-assistant-main\*" "%installPath%\" /E /I /Y >nul 2>&1
-if errorlevel 1 (
-    echo [ERROR] Failed to copy files
-    pause
-    exit /b 1
-)
 echo [OK] Files copied
 echo.
 
 REM Step 5: Clean up temporary files
-echo [5/8] Cleaning up temporary files...
+echo [5/7] Cleaning up temporary files...
 if exist "%zipPath%" del /f /q "%zipPath%" >nul 2>&1
 if exist "%extractPath%" rmdir /s /q "%extractPath%" >nul 2>&1
 echo [OK] Temporary files cleaned
 echo.
 
-REM Step 6: Check and start Ollama
-echo [6/8] Checking Ollama installation...
+REM Step 6: Check prerequisites
+echo [6/7] Checking prerequisites...
+
+REM Check if Python is available
+python --version >nul 2>&1
+if errorlevel 1 goto error_python
+
+REM Check if Node.js is available
+node --version >nul 2>&1
+if errorlevel 1 goto error_node
+
+REM Check if Ollama is available
 ollama --version >nul 2>&1
 if errorlevel 1 goto error_ollama
 
-echo [OK] Ollama found
+echo [OK] Python, Node.js, and Ollama found
 echo.
+
+REM Start Ollama in background (if not already running)
 echo Starting Ollama service...
-
-REM Kill any existing Ollama process
 taskkill /F /IM ollama.exe >nul 2>&1
-timeout /t 2 /nobreak >nul
-
-REM Start Ollama in background
+timeout /t 1 /nobreak >nul
 start "" ollama serve
-
-REM Wait for Ollama to fully start and be responsive
-echo Waiting for Ollama to fully start (this may take 10-15 seconds)...
-set "ollama_ready=0"
-set "ollama_counter=0"
-
-:wait_ollama_ready
-powershell -Command "try { $response = Invoke-WebRequest -Uri 'http://localhost:11434/api/tags' -TimeoutSec 2 -ErrorAction Stop; if ($response.StatusCode -eq 200) { exit 0 } else { exit 1 } } catch { exit 1 }" >nul 2>&1
-if errorlevel 0 (
-    set "ollama_ready=1"
-    goto ollama_is_ready
-)
-
-set /a ollama_counter=!ollama_counter!+1
-if !ollama_counter! lss 60 (
-    timeout /t 1 /nobreak >nul
-    goto wait_ollama_ready
-)
-
-:ollama_is_ready
-if !ollama_ready! equ 1 (
-    echo [OK] Ollama is running and responsive
-) else (
-    echo [WARNING] Ollama may not be responding - continuing anyway
-)
+echo [OK] Ollama started
+echo Waiting 10 seconds for Ollama to initialize...
+timeout /t 10 /nobreak >nul
 echo.
 
 REM Check if model exists, if not download it
@@ -116,13 +92,11 @@ if errorlevel 1 (
     echo ================================================================================
     echo.
     
-    REM Download model with extended timeout
     ollama pull dolphin-mistral
     
     if errorlevel 1 (
         echo.
-        echo [ERROR] Failed to download model
-        echo.
+        echo [WARNING] Failed to download model
         echo Please try running this command manually:
         echo   ollama pull dolphin-mistral
         echo.
@@ -140,20 +114,6 @@ if errorlevel 1 (
     echo.
 )
 
-REM Step 7: Install dependencies
-echo [7/8] Installing dependencies...
-
-REM Check if Python is available
-python --version >nul 2>&1
-if errorlevel 1 goto error_python
-
-REM Check if Node.js is available
-node --version >nul 2>&1
-if errorlevel 1 goto error_node
-
-echo [OK] Python and Node.js found
-echo.
-
 echo ================================================================================
 echo.
 echo                    STARTING LOCALAI ASSISTANT...
@@ -163,56 +123,31 @@ echo.
 
 timeout /t 2 /nobreak >nul
 
-REM Step 8: Start backend and frontend
-echo [8/8] Starting backend and frontend servers...
+REM Step 7: Start backend and frontend
+echo [7/7] Starting backend and frontend servers...
 echo.
 
 REM Start backend in separate window
 cd /d "%installPath%\backend"
-if errorlevel 1 (
-    echo [ERROR] Failed to change to backend directory
-    pause
-    exit /b 1
-)
-
 start "LocalAI Backend" cmd /k "python -m pip install --upgrade pip setuptools wheel >nul 2>&1 && pip install -r requirements.txt && python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"
 
 REM Wait for backend to start
 echo Waiting for backend to start...
-timeout /t 20 /nobreak >nul
+timeout /t 15 /nobreak >nul
 
 REM Start frontend in separate window
 cd /d "%installPath%\frontend"
-if errorlevel 1 (
-    echo [ERROR] Failed to change to frontend directory
-    pause
-    exit /b 1
-)
-
 start "LocalAI Frontend" cmd /k "npm install --no-fund && npm run dev"
 
 REM Wait for frontend to start and be ready
-echo Waiting for frontend to start and be ready...
-timeout /t 20 /nobreak >nul
+echo Waiting for frontend to start...
+timeout /t 15 /nobreak >nul
 
-REM Check if frontend is ready by testing the port
-echo Checking if frontend is ready...
-set "counter=0"
-:check_frontend
-netstat -ano | find ":3000" >nul 2>&1
-if errorlevel 1 (
-    set /a counter=!counter!+1
-    if !counter! lss 30 (
-        timeout /t 2 /nobreak >nul
-        goto check_frontend
-    )
-)
-
-REM Open browser only when frontend is ready
+REM Open browser
 echo.
 echo ================================================================================
 echo.
-echo                    FRONTEND IS READY - OPENING BROWSER...
+echo                    OPENING BROWSER...
 echo.
 echo ================================================================================
 echo.
