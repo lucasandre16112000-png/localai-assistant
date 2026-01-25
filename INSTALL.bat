@@ -18,19 +18,19 @@ set "zipPath=%TEMP%\localai-assistant.zip"
 set "extractPath=%TEMP%\localai-extract"
 
 REM Step 1: Create installation folder
-echo [1/7] Creating installation folder...
+echo [1/6] Creating installation folder...
 if not exist "%installPath%" mkdir "%installPath%"
 echo [OK] Folder created at: %installPath%
 echo.
 
 REM Step 2: Download project from GitHub
-echo [2/7] Downloading project from GitHub...
+echo [2/6] Downloading project from GitHub...
 powershell -Command "try { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; (New-Object System.Net.WebClient).DownloadFile('https://github.com/lucasandre16112000-png/localai-assistant/archive/refs/heads/main.zip', '%zipPath%'); Write-Host '[OK] Project downloaded' } catch { Write-Host '[ERROR] Failed to download'; exit 1 }"
 if errorlevel 1 goto error_download
 echo.
 
 REM Step 3: Extract files
-echo [3/7] Extracting files...
+echo [3/6] Extracting files...
 if exist "%extractPath%" rmdir /s /q "%extractPath%" >nul 2>&1
 mkdir "%extractPath%"
 powershell -Command "try { Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::ExtractToDirectory('%zipPath%', '%extractPath%'); Write-Host '[OK] Files extracted' } catch { Write-Host '[ERROR] Failed to extract'; exit 1 }"
@@ -38,7 +38,7 @@ if errorlevel 1 goto error_extract
 echo.
 
 REM Step 4: Copy files to permanent location
-echo [4/7] Copying files to permanent location...
+echo [4/6] Copying files to permanent location...
 if exist "%installPath%\*" rmdir /s /q "%installPath%" >nul 2>&1
 mkdir "%installPath%"
 xcopy "%extractPath%\localai-assistant-main\*" "%installPath%\" /E /I /Y >nul 2>&1
@@ -46,14 +46,14 @@ echo [OK] Files copied
 echo.
 
 REM Step 5: Clean up temporary files
-echo [5/7] Cleaning up temporary files...
+echo [5/6] Cleaning up temporary files...
 if exist "%zipPath%" del /f /q "%zipPath%" >nul 2>&1
 if exist "%extractPath%" rmdir /s /q "%extractPath%" >nul 2>&1
 echo [OK] Temporary files cleaned
 echo.
 
 REM Step 6: Check prerequisites
-echo [6/7] Checking prerequisites...
+echo [6/6] Checking prerequisites...
 
 REM Check if Python is available
 python --version >nul 2>&1
@@ -70,49 +70,13 @@ if errorlevel 1 goto error_ollama
 echo [OK] Python, Node.js, and Ollama found
 echo.
 
-REM Start Ollama in background (if not already running)
+REM Start Ollama in background
 echo Starting Ollama service...
 taskkill /F /IM ollama.exe >nul 2>&1
 timeout /t 1 /nobreak >nul
 start "" ollama serve
 echo [OK] Ollama started
-echo Waiting 10 seconds for Ollama to initialize...
-timeout /t 10 /nobreak >nul
 echo.
-
-REM Check if model exists, if not download it
-echo Checking for AI models...
-ollama list 2>nul | find "dolphin-mistral" >nul 2>&1
-if errorlevel 1 (
-    echo.
-    echo ================================================================================
-    echo Downloading AI model (dolphin-mistral)...
-    echo This is a one-time download and may take 5-15 minutes depending on your internet
-    echo Please wait, do NOT close this window...
-    echo ================================================================================
-    echo.
-    
-    ollama pull dolphin-mistral
-    
-    if errorlevel 1 (
-        echo.
-        echo [WARNING] Failed to download model
-        echo Please try running this command manually:
-        echo   ollama pull dolphin-mistral
-        echo.
-        echo Then restart the application
-        echo.
-        pause
-        exit /b 1
-    ) else (
-        echo.
-        echo [OK] Model downloaded successfully
-        echo.
-    )
-) else (
-    echo [OK] Models found
-    echo.
-)
 
 echo ================================================================================
 echo.
@@ -122,10 +86,6 @@ echo ===========================================================================
 echo.
 
 timeout /t 2 /nobreak >nul
-
-REM Step 7: Start backend and frontend
-echo [7/7] Starting backend and frontend servers...
-echo.
 
 REM Start backend in separate window
 cd /d "%installPath%\backend"
@@ -167,7 +127,22 @@ echo Docs:     http://localhost:8000/docs
 echo.
 echo ================================================================================
 echo.
-echo IMPORTANT:
+echo IMPORTANT - FIRST TIME SETUP:
+echo.
+echo 1. If this is your first time, you need to download an AI model:
+echo    Open a new Command Prompt and run:
+echo.
+echo    ollama pull dolphin-mistral
+echo.
+echo    This will download the model (5-15 minutes depending on internet)
+echo.
+echo 2. After the model is downloaded, refresh the browser or restart the app
+echo.
+echo 3. Then you can start chatting!
+echo.
+echo ================================================================================
+echo.
+echo IMPORTANT - KEEP RUNNING:
 echo - Keep all terminal windows open
 echo - Do NOT close them or the application will stop
 echo - To stop: Close all terminal windows
