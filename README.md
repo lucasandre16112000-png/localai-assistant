@@ -37,14 +37,12 @@ If you just want to run the application without any technical knowledge:
 ### What Happens When You Click INSTALL.bat:
 
 ```
-[1/8] Creating installation folder...
-[2/8] Downloading project from GitHub...
-[3/8] Extracting files...
-[4/8] Copying files to permanent location...
-[5/8] Cleaning up temporary files...
-[6/8] Installing backend dependencies...
-[7/8] Installing frontend dependencies...
-[8/8] Starting servers...
+[1/6] Creating installation folder...
+[2/6] Downloading project from GitHub...
+[3/6] Extracting files...
+[4/6] Copying files to permanent location...
+[5/6] Cleaning up temporary files...
+[6/6] Installing dependencies and starting servers...
 
 ✓ Backend starts (port 8000)
 ✓ Frontend starts (port 3000)
@@ -81,17 +79,6 @@ If you just want to run the application without any technical knowledge:
 - Switch models anytime
 - Optimized for local performance
 
-### ⚙️ Advanced Settings
-- Temperature control (creativity)
-- Top P and Top K parameters
-- Max tokens configuration
-- Full control over AI behavior
-
-### 📊 Analytics Dashboard
-- View usage statistics
-- Track conversation metrics
-- Visual charts and reports
-
 ### 🔒 100% Local
 - Your data never leaves your computer
 - No cloud servers needed
@@ -127,6 +114,8 @@ Before running LocalAI Assistant, you need to have these programs installed on y
 - Type: `python --version`
 - You should see: `Python 3.11.x` or higher
 
+---
+
 ### 2. **Node.js** (Required)
 - **What is it?** A JavaScript runtime environment
 - **Why do you need it?** LocalAI Assistant frontend is built with Node.js
@@ -147,18 +136,33 @@ Before running LocalAI Assistant, you need to have these programs installed on y
 - Type: `node --version`
 - You should see: `v18.x.x` or higher
 
-### 3. **Git** (Optional but Recommended)
+---
+
+### 3. **Ollama** (Required for AI Models)
+- **What is it?** Local AI model runner
+- **Why do you need it?** To run AI models locally on your computer
+- **Download:** https://ollama.ai/
+- **Installation Steps:**
+  1. Go to https://ollama.ai/
+  2. Download the Windows version
+  3. Run the installer
+  4. Follow the installation steps
+  5. Ollama will start automatically
+  6. Download a model: Open Command Prompt and type: `ollama pull mistral`
+  7. Wait for the model to download (this may take a few minutes)
+
+**Verify Installation:**
+- Open Command Prompt (search for "cmd")
+- Type: `ollama --version`
+- You should see a version number
+
+---
+
+### 4. **Git** (Optional but Recommended)
 - **What is it?** A version control system
 - **Why do you need it?** To download the project from GitHub
 - **Download:** https://git-scm.com/
 - **Installation:** Click "Next" through all steps
-
-### 4. **Ollama** (Required for AI Models)
-- **What is it?** Local AI model runner
-- **Why do you need it?** To run AI models locally
-- **Download:** https://ollama.ai/
-- **Installation:** Run the installer and follow steps
-- **After Installation:** Open Ollama and download a model (e.g., `ollama pull mistral`)
 
 ---
 
@@ -203,8 +207,11 @@ Before running LocalAI Assistant, you need to have these programs installed on y
 2. Download the Windows version
 3. Run the installer
 4. Follow the installation steps
-5. After installation, open Ollama
-6. Download a model (e.g., type `ollama pull mistral` in terminal)
+5. After installation, Ollama will start automatically
+6. Download a model:
+   - Open Command Prompt (search for "cmd")
+   - Type: `ollama pull mistral`
+   - Wait for the model to download
 
 #### Step 4: Download LocalAI Assistant
 
@@ -275,11 +282,6 @@ In **Settings**, you can adjust:
 - **Top K**: Number of tokens to consider
 - **Max Tokens**: Maximum length of response
 
-### 7. View Analytics
-- Click the **Analytics** tab to see statistics
-- View conversation metrics
-- See usage patterns
-
 ---
 
 ## 🌐 Access URLs
@@ -301,13 +303,11 @@ In **Settings**, you can adjust:
 - **Vite** - Build tool
 - **TailwindCSS** - Styling
 - **Recharts** - Data visualization
-- **Radix UI** - Component library
 
 ### Backend
 - **FastAPI** - Web framework
 - **Python 3.11+** - Programming language
 - **Uvicorn** - ASGI server
-- **LangChain** - AI integration
 - **SQLAlchemy** - Database ORM
 
 ### AI
@@ -328,8 +328,7 @@ localai-assistant/
 │   │   ├── services/       # Business logic
 │   │   ├── models/         # Database models
 │   │   └── schemas/        # Data validation
-│   ├── requirements.txt    # Python dependencies
-│   └── venv/              # Virtual environment (created by INSTALL.bat)
+│   └── requirements.txt    # Python dependencies
 │
 ├── frontend/               # React + TypeScript Frontend
 │   ├── src/
@@ -337,12 +336,11 @@ localai-assistant/
 │   │   ├── lib/          # Utilities and API client
 │   │   ├── App.tsx       # Main app component
 │   │   └── main.tsx      # Entry point
-│   ├── package.json      # Node.js dependencies
-│   └── vite.config.ts    # Vite configuration
+│   └── package.json      # Node.js dependencies
 │
-├── INSTALL.bat            # Automatic installer (FINAL VERSION)
+├── INSTALL.bat            # Automatic installer (ONE-CLICK!)
 ├── README.md             # This file
-└── docker-compose.yml    # Docker configuration (optional)
+└── .gitignore           # Git configuration
 ```
 
 ---
@@ -393,9 +391,8 @@ localai-assistant/
 ### Problem: "Cannot find module"
 **Solution:**
 1. Delete the `node_modules` folder in frontend
-2. Delete the `venv` folder in backend
-3. Run INSTALL.bat again
-4. Wait for all dependencies to install
+2. Run INSTALL.bat again
+3. Wait for all dependencies to install
 
 ### Problem: "Browser shows error when opening"
 **Solution:**
@@ -421,24 +418,6 @@ The backend provides a complete REST API. Access the interactive documentation a
 http://localhost:8000/docs
 ```
 
-### Example API Calls
-
-**Get Conversations:**
-```bash
-curl http://localhost:8000/api/v1/conversations/
-```
-
-**Send Message:**
-```bash
-curl -X POST http://localhost:8000/api/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -d '{
-    "message": "Hello!",
-    "model": "mistral",
-    "temperature": 0.7
-  }'
-```
-
 ---
 
 ## 🔧 Development Commands
@@ -446,8 +425,6 @@ curl -X POST http://localhost:8000/api/v1/chat/completions \
 ### Backend Commands
 ```bash
 cd backend
-python -m venv venv
-venv\Scripts\activate
 pip install -r requirements.txt
 python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
@@ -458,20 +435,7 @@ cd frontend
 npm install
 npm run dev
 npm run build
-npm run preview
 ```
-
----
-
-## 🚀 Next Steps
-
-After successful installation:
-
-1. **Explore the Chat** - Send your first message
-2. **Try Different Models** - Switch between AI models
-3. **Adjust Settings** - Customize AI behavior
-4. **View History** - Check your conversation history
-5. **Check Analytics** - See usage statistics
 
 ---
 
@@ -496,17 +460,10 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 🎯 Getting Started Now
 
 ### The Fastest Way:
-1. Download `INSTALL.bat`
-2. Double-click it
-3. Done! ✅
+1. Install Python, Node.js, and Ollama (see above)
+2. Download the project from GitHub
+3. Double-click `INSTALL.bat`
+4. Wait for everything to install
+5. Start chatting with your private AI!
 
-### Questions?
-- Check the Troubleshooting section
-- Make sure Python, Node.js, and Ollama are installed
-- Restart your computer if something doesn't work
-
----
-
-**Enjoy your local AI assistant! 🤖**
-
-For more information, visit: https://github.com/lucasandre16112000-png/localai-assistant
+**Enjoy your local AI assistant!** 🚀
