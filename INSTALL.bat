@@ -82,6 +82,8 @@ taskkill /F /IM ollama.exe >nul 2>&1
 timeout /t 1 /nobreak >nul
 start "" ollama serve
 echo [OK] Ollama started
+echo Waiting 10 seconds for Ollama to initialize...
+timeout /t 10 /nobreak >nul
 echo.
 
 echo ================================================================================
@@ -96,20 +98,24 @@ timeout /t 2 /nobreak >nul
 REM Start backend in separate window
 cd /d "%installPath%\backend"
 if errorlevel 1 goto error_backend_dir
-start "LocalAI Backend" cmd /k "python -m pip install --upgrade pip setuptools wheel >nul 2>&1 && pip install -r requirements.txt && python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"
 
-REM Wait for backend to start
-echo Waiting for backend to start...
-timeout /t 15 /nobreak >nul
+echo Installing backend dependencies (this may take 2-3 minutes)...
+start "LocalAI Backend" cmd /k "python -m pip install --upgrade pip setuptools wheel && pip install -r requirements.txt && echo. && echo Backend dependencies installed! && echo. && python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"
+
+REM Wait for backend to start (increased timeout)
+echo Waiting for backend to start (this may take 1-2 minutes)...
+timeout /t 30 /nobreak >nul
 
 REM Start frontend in separate window
 cd /d "%installPath%\frontend"
 if errorlevel 1 goto error_frontend_dir
+
+echo Installing frontend dependencies...
 start "LocalAI Frontend" cmd /k "npm install --no-fund && npm run dev"
 
-REM Wait for frontend to start and be ready
+REM Wait for frontend to start
 echo Waiting for frontend to start...
-timeout /t 15 /nobreak >nul
+timeout /t 20 /nobreak >nul
 
 REM Open browser
 echo.
