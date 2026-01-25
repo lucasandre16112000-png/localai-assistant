@@ -1,4 +1,16 @@
+# LocalAI Assistant - Git Ignore
+# Author: Lucas Andre S
+
+# ===========================================
+# Environment
+# ===========================================
+.env
+.env.local
+.env.*.local
+
+# ===========================================
 # Python
+# ===========================================
 __pycache__/
 *.py[cod]
 *$py.class
@@ -10,68 +22,85 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
 lib64/
 parts/
 sdist/
 var/
 wheels/
-pip-wheel-metadata/
-share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-MANIFEST
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+.mypy_cache/
+.ruff_cache/
 
-# Virtual environments
-venv/
-ENV/
-env/
-.venv
+# ===========================================
+# Node.js
+# ===========================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
 
+# ===========================================
+# Build outputs
+# ===========================================
+dist/
+build/
+*.local
+
+# ===========================================
 # IDE
-.vscode/
+# ===========================================
 .idea/
+.vscode/
 *.swp
 *.swo
 *~
+.project
+.classpath
+.settings/
+
+# ===========================================
+# OS
+# ===========================================
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
-# Node.js
-node_modules/
-npm-debug.log
-yarn-error.log
-.pnpm-debug.log
-
-# Environment
-.env
-.env.local
-.env.*.local
-
+# ===========================================
 # Database
+# ===========================================
 *.db
 *.sqlite
 *.sqlite3
 
+# ===========================================
 # Logs
-*.log
+# ===========================================
 logs/
+*.log
 
-# OS
-.DS_Store
-Thumbs.db
+# ===========================================
+# Docker
+# ===========================================
+.docker/
 
-# Build
-dist/
-build/
-*.egg-info/
-
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
-
-# Temporary files
-*.tmp
+# ===========================================
+# Misc
+# ===========================================
 *.bak
-*.swp
+*.tmp
+*.temp
+.cache/
