@@ -8,7 +8,6 @@ A modern, enterprise-grade AI assistant application featuring:
 - Real-time chat with streaming responses
 - Multiple conversation management
 - Customizable system prompts
-- Analytics dashboard
 - Full REST API with OpenAPI documentation
 """
 
@@ -27,20 +26,6 @@ from .routers import (
     models_router,
     prompts_router,
 )
-from .routers.web import router as web_router
-from .routers.code import router as code_router
-from .routers.tasks import router as tasks_router
-from .routers.data import router as data_router
-from .routers.media import router as media_router
-from .routers.execute import router as execute_router
-from .routers.llm import router as llm_router
-from .routers.docs import router as docs_router
-from .routers.projects import router as projects_router
-from .routers.files import router as files_router
-from .routers.analysis import router as analysis_router
-from .routers.security import router as security_router
-from .routers.database import router as database_router
-from .routers.devops import router as devops_router
 
 # Configure logging
 logging.basicConfig(
@@ -85,7 +70,6 @@ A premium, enterprise-grade AI assistant with local LLM support.
 - 💬 **Conversations** - Full conversation management with history
 - 🎛️ **Models** - List and manage available LLM models
 - 📝 **System Prompts** - Customizable prompt templates
-- 📊 **Analytics** - Usage statistics and metrics
 
 ### Authentication
 
@@ -143,25 +127,11 @@ async def global_exception_handler(request: Request, exc: Exception):
     )
 
 
-# Include routers
+# Include only essential routers
 app.include_router(chat_router, prefix="/api/v1")
 app.include_router(conversations_router, prefix="/api/v1")
 app.include_router(models_router, prefix="/api/v1")
 app.include_router(prompts_router, prefix="/api/v1")
-app.include_router(web_router, prefix="/api/v1")
-app.include_router(code_router, prefix="/api/v1")
-app.include_router(tasks_router, prefix="/api/v1")
-app.include_router(data_router, prefix="/api/v1")
-app.include_router(media_router, prefix="/api/v1")
-app.include_router(execute_router, prefix="/api/v1")
-app.include_router(llm_router, prefix="/api/v1")
-app.include_router(docs_router, prefix="/api/v1")
-app.include_router(projects_router, prefix="/api/v1")
-app.include_router(files_router, prefix="/api/v1")
-app.include_router(analysis_router, prefix="/api/v1")
-app.include_router(security_router, prefix="/api/v1")
-app.include_router(database_router, prefix="/api/v1")
-app.include_router(devops_router, prefix="/api/v1")
 
 
 # Root endpoint

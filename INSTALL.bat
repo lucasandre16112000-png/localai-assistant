@@ -82,8 +82,8 @@ taskkill /F /IM ollama.exe >nul 2>&1
 timeout /t 1 /nobreak >nul
 start "" ollama serve
 echo [OK] Ollama started
-echo Waiting 10 seconds for Ollama to initialize...
-timeout /t 10 /nobreak >nul
+echo Waiting 15 seconds for Ollama to initialize...
+timeout /t 15 /nobreak >nul
 echo.
 
 echo ================================================================================
@@ -99,12 +99,39 @@ REM Start backend in separate window
 cd /d "%installPath%\backend"
 if errorlevel 1 goto error_backend_dir
 
-echo Installing backend dependencies (this may take 2-3 minutes)...
-start "LocalAI Backend" cmd /k "python -m pip install --upgrade pip setuptools wheel && pip install -r requirements.txt && echo. && echo Backend dependencies installed! && echo. && python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"
+echo Installing backend dependencies (this may take 3-5 minutes)...
+start "LocalAI Backend" cmd /k "python -m pip install --upgrade pip setuptools wheel && pip install -r requirements.txt && echo. && echo ===== Backend Ready ===== && echo. && python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"
 
-REM Wait for backend to start (increased timeout)
-echo Waiting for backend to start (this may take 1-2 minutes)...
-timeout /t 30 /nobreak >nul
+REM Wait for backend to start (VERY LONG TIMEOUT - 90 seconds)
+echo Waiting for backend to fully start and be ready...
+echo This may take 2-3 minutes on first run...
+timeout /t 90 /nobreak >nul
+
+REM Verify backend is responding
+echo Checking if backend is responding...
+set "backend_ready=0"
+set "backend_counter=0"
+
+:check_backend
+powershell -Command "try { $response = Invoke-WebRequest -Uri 'http://localhost:8000/health' -TimeoutSec 2 -ErrorAction Stop; if ($response.StatusCode -eq 200) { exit 0 } else { exit 1 } } catch { exit 1 }" >nul 2>&1
+if errorlevel 0 (
+    set "backend_ready=1"
+    echo [OK] Backend is responding!
+    goto backend_ready
+)
+
+set /a backend_counter=!backend_counter!+1
+if !backend_counter! lss 10 (
+    echo Attempt !backend_counter! of 10...
+    timeout /t 5 /nobreak >nul
+    goto check_backend
+)
+
+:backend_ready
+if !backend_ready! equ 0 (
+    echo [WARNING] Backend may not be fully ready, but continuing...
+)
+echo.
 
 REM Start frontend in separate window
 cd /d "%installPath%\frontend"
@@ -115,7 +142,20 @@ start "LocalAI Frontend" cmd /k "npm install --no-fund && npm run dev"
 
 REM Wait for frontend to start
 echo Waiting for frontend to start...
-timeout /t 20 /nobreak >nul
+timeout /t 30 /nobreak >nul
+
+REM Check if frontend is ready by testing the port
+echo Checking if frontend is ready...
+set "counter=0"
+:check_frontend
+netstat -ano | find ":3000" >nul 2>&1
+if errorlevel 1 (
+    set /a counter=!counter!+1
+    if !counter! lss 30 (
+        timeout /t 2 /nobreak >nul
+        goto check_frontend
+    )
+)
 
 REM Open browser
 echo.
@@ -126,6 +166,7 @@ echo.
 echo ================================================================================
 echo.
 
+timeout /t 5 /nobreak >nul
 start http://localhost:3000
 
 echo.
