@@ -55,22 +55,46 @@ echo.
 REM Step 6: Install backend dependencies
 echo [6/8] Installing backend dependencies...
 cd /d "%installPath%\backend"
-if exist "venv" rmdir /s /q venv
-python -m venv venv >nul 2>&1
+
+REM Check if Python is available
+python --version >nul 2>&1
 if errorlevel 1 goto error_python
-call venv\Scripts\activate.bat
-pip install --upgrade pip setuptools wheel >nul 2>&1
+
+REM Remove old venv if exists
+if exist "venv" rmdir /s /q venv >nul 2>&1
+
+REM Create venv
+python -m venv venv >nul 2>&1
+if errorlevel 1 goto error_venv
+
+REM Activate venv and install
+call venv\Scripts\activate.bat >nul 2>&1
+
+REM Upgrade pip
+python -m pip install --upgrade pip setuptools wheel >nul 2>&1
+
+REM Install requirements
 pip install -r requirements.txt >nul 2>&1
 if errorlevel 1 goto error_install
+
 echo [OK] Backend dependencies installed
 echo.
 
 REM Step 7: Install frontend dependencies
 echo [7/8] Installing frontend dependencies...
 cd /d "%installPath%\frontend"
-if exist "node_modules" rmdir /s /q node_modules
+
+REM Check if Node.js is available
+node --version >nul 2>&1
+if errorlevel 1 goto error_node
+
+REM Remove old node_modules if exists
+if exist "node_modules" rmdir /s /q node_modules >nul 2>&1
+
+REM Install npm packages
 npm install --no-fund >nul 2>&1
 if errorlevel 1 goto error_npm
+
 echo [OK] Frontend dependencies installed
 echo.
 
@@ -88,12 +112,11 @@ timeout /t 2 /nobreak >nul
 
 REM Start backend in separate window
 cd /d "%installPath%\backend"
-call venv\Scripts\activate.bat
-start "LocalAI Backend" cmd /k "python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"
+start "LocalAI Backend" cmd /k "call venv\Scripts\activate.bat && python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"
 
 REM Wait for backend to start
 echo Waiting for backend to start...
-timeout /t 5 /nobreak >nul
+timeout /t 8 /nobreak >nul
 
 REM Start frontend in separate window
 cd /d "%installPath%\frontend"
@@ -101,7 +124,7 @@ start "LocalAI Frontend" cmd /k "npm run dev"
 
 REM Wait for frontend to start
 echo Waiting for frontend to start...
-timeout /t 5 /nobreak >nul
+timeout /t 8 /nobreak >nul
 
 REM Open browser
 echo.
@@ -162,6 +185,15 @@ echo.
 pause
 exit /b 1
 
+:error_venv
+echo.
+echo [ERROR] Failed to create Python virtual environment
+echo Make sure Python is installed correctly
+echo Try reinstalling Python with "Add Python to PATH" checked
+echo.
+pause
+exit /b 1
+
 :error_install
 echo.
 echo [ERROR] Failed to install backend dependencies
@@ -170,11 +202,19 @@ echo.
 pause
 exit /b 1
 
+:error_node
+echo.
+echo [ERROR] Node.js not found or not in PATH
+echo Make sure Node.js 18+ is installed
+echo Download from: https://nodejs.org/
+echo.
+pause
+exit /b 1
+
 :error_npm
 echo.
 echo [ERROR] Failed to install frontend dependencies
-echo Make sure Node.js is installed
-echo Download from: https://nodejs.org/
+echo Make sure Node.js is installed correctly
 echo.
 pause
 exit /b 1
