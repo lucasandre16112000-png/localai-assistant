@@ -63,33 +63,32 @@ echo Starting Ollama service...
 
 REM Kill any existing Ollama process
 taskkill /F /IM ollama.exe >nul 2>&1
+timeout /t 2 /nobreak >nul
 
 REM Start Ollama in background
 start "" ollama serve
 
-REM Wait for Ollama to start
-echo Waiting for Ollama to start (this may take a moment)...
-timeout /t 5 /nobreak >nul
-
-REM Check if Ollama is responding
+REM Wait for Ollama to fully start and be responsive
+echo Waiting for Ollama to fully start (this may take 10-15 seconds)...
 set "ollama_ready=0"
 set "ollama_counter=0"
-:check_ollama
-powershell -Command "try { $response = Invoke-WebRequest -Uri 'http://localhost:11434/api/tags' -TimeoutSec 2 -ErrorAction Stop; exit 0 } catch { exit 1 }" >nul 2>&1
+
+:wait_ollama_ready
+powershell -Command "try { $response = Invoke-WebRequest -Uri 'http://localhost:11434/api/tags' -TimeoutSec 2 -ErrorAction Stop; if ($response.StatusCode -eq 200) { exit 0 } else { exit 1 } } catch { exit 1 }" >nul 2>&1
 if errorlevel 0 (
     set "ollama_ready=1"
-    goto ollama_ready
+    goto ollama_is_ready
 )
 
 set /a ollama_counter=!ollama_counter!+1
-if !ollama_counter! lss 30 (
-    timeout /t 2 /nobreak >nul
-    goto check_ollama
+if !ollama_counter! lss 60 (
+    timeout /t 1 /nobreak >nul
+    goto wait_ollama_ready
 )
 
-:ollama_ready
+:ollama_is_ready
 if !ollama_ready! equ 1 (
-    echo [OK] Ollama is running
+    echo [OK] Ollama is running and responsive
 ) else (
     echo [WARNING] Ollama may not be responding - continuing anyway
 )
@@ -97,21 +96,38 @@ echo.
 
 REM Check if model exists, if not download it
 echo Checking for AI models...
-ollama list | find "dolphin-mistral" >nul 2>&1
+ollama list 2>nul | find "dolphin-mistral" >nul 2>&1
 if errorlevel 1 (
-    echo No models found. Downloading dolphin-mistral (this may take several minutes)...
-    echo Please wait, this is a one-time download...
     echo.
+    echo ================================================================================
+    echo Downloading AI model (dolphin-mistral)...
+    echo This is a one-time download and may take 5-15 minutes depending on your internet
+    echo Please wait, do NOT close this window...
+    echo ================================================================================
+    echo.
+    
+    REM Download model with extended timeout
     ollama pull dolphin-mistral
+    
     if errorlevel 1 (
-        echo [WARNING] Failed to download model, but continuing...
+        echo.
+        echo [WARNING] Failed to download model
+        echo Please try running this command manually:
+        echo   ollama pull dolphin-mistral
+        echo.
+        echo Then restart the application
+        echo.
+        pause
+        exit /b 1
     ) else (
+        echo.
         echo [OK] Model downloaded successfully
+        echo.
     )
 ) else (
     echo [OK] Models found
+    echo.
 )
-echo.
 
 REM Step 7: Install dependencies
 echo [7/8] Installing dependencies...
@@ -142,7 +158,7 @@ echo.
 
 REM Start backend in separate window
 cd /d "%installPath%\backend"
-start "LocalAI Backend" cmd /k "python -m pip install --upgrade pip setuptools wheel && pip install -r requirements.txt && python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"
+start "LocalAI Backend" cmd /k "python -m pip install --upgrade pip setuptools wheel >nul 2>&1 && pip install -r requirements.txt && python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"
 
 REM Wait for backend to start
 echo Waiting for backend to start...
