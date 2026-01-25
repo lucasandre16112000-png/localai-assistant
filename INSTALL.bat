@@ -76,19 +76,19 @@ timeout /t 2 /nobreak >nul
 
 REM Start backend in separate window
 cd /d "%installPath%\backend"
-start "LocalAI Backend" cmd /k "pip install -q -r requirements.txt && python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"
+start "LocalAI Backend" cmd /k "python -m pip install --upgrade pip setuptools wheel && pip install -r requirements.txt && python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"
 
 REM Wait for backend to start
 echo Waiting for backend to start...
-timeout /t 15 /nobreak >nul
+timeout /t 20 /nobreak >nul
 
 REM Start frontend in separate window
 cd /d "%installPath%\frontend"
-start "LocalAI Frontend" cmd /k "npm install --no-fund -q && npm run dev"
+start "LocalAI Frontend" cmd /k "npm install --no-fund && npm run dev"
 
 REM Wait for frontend to start and be ready
 echo Waiting for frontend to start and be ready...
-timeout /t 15 /nobreak >nul
+timeout /t 20 /nobreak >nul
 
 REM Check if frontend is ready by testing the port
 echo Checking if frontend is ready...
