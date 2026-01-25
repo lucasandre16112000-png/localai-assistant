@@ -209,8 +209,8 @@ async def chat_completion(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/completions-stream")
-async def chat_completion_stream(
+@router.post("/completions/stream")
+async def chat_completion_stream_new(
     request: ChatRequest,
     db: AsyncSession = Depends(get_db)
 ):
