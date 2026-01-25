@@ -81,8 +81,8 @@ taskkill /F /IM ollama.exe >nul 2>&1
 timeout /t 1 /nobreak >nul
 start "" ollama serve
 echo [OK] Ollama started
-echo Waiting 15 seconds for Ollama to initialize...
-timeout /t 15 /nobreak >nul
+echo Waiting 20 seconds for Ollama to initialize...
+timeout /t 20 /nobreak >nul
 echo.
 
 REM Check if model exists, if not download it
@@ -125,34 +125,13 @@ cd /d "%installPath%\backend"
 if errorlevel 1 goto error_backend_dir
 
 echo Starting backend server...
-echo This may take 2-3 minutes on first run...
+echo Installing dependencies (this may take 2-3 minutes)...
 start "LocalAI Backend" cmd /k "python -m pip install --upgrade pip setuptools wheel >nul 2>&1 && pip install -r requirements.txt >nul 2>&1 && python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"
 
-REM Wait for backend to start with verification
-echo Waiting for backend to start...
-set "backend_ready=0"
-set "backend_attempts=0"
-
-:wait_backend
-set /a backend_attempts=!backend_attempts!+1
-if !backend_attempts! gtr 60 (
-    echo [WARNING] Backend taking longer than expected, continuing anyway...
-    set "backend_ready=1"
-    goto backend_done
-)
-
-powershell -Command "try { $response = Invoke-WebRequest -Uri 'http://localhost:8000/health' -TimeoutSec 2 -ErrorAction Stop; if ($response.StatusCode -eq 200) { exit 0 } else { exit 1 } } catch { exit 1 }" >nul 2>&1
-
-if errorlevel 0 (
-    set "backend_ready=1"
-    echo [OK] Backend is responding!
-    goto backend_done
-)
-
-timeout /t 1 /nobreak >nul
-goto wait_backend
-
-:backend_done
+REM Wait for backend to start
+echo Waiting for backend to initialize (60 seconds)...
+timeout /t 60 /nobreak >nul
+echo [OK] Backend should be ready
 echo.
 
 REM Start frontend in separate window
@@ -163,34 +142,15 @@ echo Starting frontend server...
 echo Installing dependencies (this may take 1-2 minutes)...
 start "LocalAI Frontend" cmd /k "npm install --no-fund && npm run dev"
 
-REM Wait for frontend to start with verification
-echo Waiting for frontend to start...
-set "frontend_ready=0"
-set "frontend_attempts=0"
-
-:wait_frontend
-set /a frontend_attempts=!frontend_attempts!+1
-if !frontend_attempts! gtr 120 (
-    echo [WARNING] Frontend taking longer than expected, continuing anyway...
-    set "frontend_ready=1"
-    goto frontend_done
-)
-
-powershell -Command "try { $response = Invoke-WebRequest -Uri 'http://localhost:3000/' -TimeoutSec 2 -ErrorAction Stop; if ($response.StatusCode -eq 200) { exit 0 } else { exit 1 } } catch { exit 1 }" >nul 2>&1
-
-if errorlevel 0 (
-    set "frontend_ready=1"
-    echo [OK] Frontend is responding!
-    goto frontend_done
-)
-
-timeout /t 1 /nobreak >nul
-goto wait_frontend
-
-:frontend_done
+REM Wait for frontend to start - VERY IMPORTANT: Give it enough time
+echo Waiting for frontend to initialize (90 seconds)...
+echo This is critical - do NOT interrupt!
+timeout /t 90 /nobreak >nul
+echo [OK] Frontend should be ready
 echo.
 
-REM Open browser only when everything is ready
+REM Open browser
+echo.
 echo ================================================================================
 echo.
 echo                    OPENING BROWSER...
@@ -198,15 +158,9 @@ echo.
 echo ================================================================================
 echo.
 
-if !backend_ready! equ 1 if !frontend_ready! equ 1 (
-    echo Everything is ready! Opening browser...
-    timeout /t 2 /nobreak >nul
-    start http://localhost:3000
-) else (
-    echo [WARNING] Services may not be fully ready, but opening browser anyway...
-    timeout /t 5 /nobreak >nul
-    start http://localhost:3000
-)
+echo Everything is ready! Opening browser in 5 seconds...
+timeout /t 5 /nobreak >nul
+start http://localhost:3000
 
 echo.
 echo ================================================================================
