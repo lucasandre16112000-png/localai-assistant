@@ -20,6 +20,11 @@ set "extractPath=%TEMP%\localai-extract"
 REM Step 1: Create installation folder
 echo [1/8] Creating installation folder...
 if not exist "%installPath%" mkdir "%installPath%"
+if errorlevel 1 (
+    echo [ERROR] Failed to create folder
+    pause
+    exit /b 1
+)
 echo [OK] Folder created at: %installPath%
 echo.
 
@@ -42,6 +47,11 @@ echo [4/8] Copying files to permanent location...
 if exist "%installPath%\*" rmdir /s /q "%installPath%" >nul 2>&1
 mkdir "%installPath%"
 xcopy "%extractPath%\localai-assistant-main\*" "%installPath%\" /E /I /Y >nul 2>&1
+if errorlevel 1 (
+    echo [ERROR] Failed to copy files
+    pause
+    exit /b 1
+)
 echo [OK] Files copied
 echo.
 
@@ -111,7 +121,8 @@ if errorlevel 1 (
     
     if errorlevel 1 (
         echo.
-        echo [WARNING] Failed to download model
+        echo [ERROR] Failed to download model
+        echo.
         echo Please try running this command manually:
         echo   ollama pull dolphin-mistral
         echo.
@@ -158,6 +169,12 @@ echo.
 
 REM Start backend in separate window
 cd /d "%installPath%\backend"
+if errorlevel 1 (
+    echo [ERROR] Failed to change to backend directory
+    pause
+    exit /b 1
+)
+
 start "LocalAI Backend" cmd /k "python -m pip install --upgrade pip setuptools wheel >nul 2>&1 && pip install -r requirements.txt && python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"
 
 REM Wait for backend to start
@@ -166,6 +183,12 @@ timeout /t 20 /nobreak >nul
 
 REM Start frontend in separate window
 cd /d "%installPath%\frontend"
+if errorlevel 1 (
+    echo [ERROR] Failed to change to frontend directory
+    pause
+    exit /b 1
+)
+
 start "LocalAI Frontend" cmd /k "npm install --no-fund && npm run dev"
 
 REM Wait for frontend to start and be ready
@@ -222,7 +245,7 @@ exit /b 0
 
 :error_download
 echo.
-echo [ERROR] Failed to download project
+echo [ERROR] Failed to download project from GitHub
 echo Check your internet connection and try again
 echo.
 pause
@@ -231,6 +254,7 @@ exit /b 1
 :error_extract
 echo.
 echo [ERROR] Failed to extract files
+echo Make sure you have enough disk space
 echo.
 pause
 exit /b 1
