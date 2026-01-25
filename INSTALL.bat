@@ -31,7 +31,9 @@ echo.
 
 REM Step 3: Extract files
 echo [3/6] Extracting files...
-if exist "%extractPath%" rmdir /s /q "%extractPath%" >nul 2>&1
+if exist "%extractPath%" (
+    rmdir /s /q "%extractPath%" >nul 2>&1
+)
 mkdir "%extractPath%"
 powershell -Command "try { Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::ExtractToDirectory('%zipPath%', '%extractPath%'); Write-Host '[OK] Files extracted' } catch { Write-Host '[ERROR] Failed to extract'; exit 1 }"
 if errorlevel 1 goto error_extract
@@ -39,9 +41,13 @@ echo.
 
 REM Step 4: Copy files to permanent location
 echo [4/6] Copying files to permanent location...
-if exist "%installPath%\*" rmdir /s /q "%installPath%" >nul 2>&1
+REM Remove old installation if exists
+if exist "%installPath%" (
+    rmdir /s /q "%installPath%" >nul 2>&1
+)
 mkdir "%installPath%"
 xcopy "%extractPath%\localai-assistant-main\*" "%installPath%\" /E /I /Y >nul 2>&1
+if errorlevel 1 goto error_copy
 echo [OK] Files copied
 echo.
 
@@ -89,6 +95,7 @@ timeout /t 2 /nobreak >nul
 
 REM Start backend in separate window
 cd /d "%installPath%\backend"
+if errorlevel 1 goto error_backend_dir
 start "LocalAI Backend" cmd /k "python -m pip install --upgrade pip setuptools wheel >nul 2>&1 && pip install -r requirements.txt && python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"
 
 REM Wait for backend to start
@@ -97,6 +104,7 @@ timeout /t 15 /nobreak >nul
 
 REM Start frontend in separate window
 cd /d "%installPath%\frontend"
+if errorlevel 1 goto error_frontend_dir
 start "LocalAI Frontend" cmd /k "npm install --no-fund && npm run dev"
 
 REM Wait for frontend to start and be ready
@@ -169,6 +177,14 @@ echo.
 pause
 exit /b 1
 
+:error_copy
+echo.
+echo [ERROR] Failed to copy files
+echo Make sure you have enough disk space
+echo.
+pause
+exit /b 1
+
 :error_python
 echo.
 echo [ERROR] Python not found or not in PATH
@@ -194,6 +210,22 @@ echo [ERROR] Ollama not found or not in PATH
 echo Make sure Ollama is installed
 echo Download from: https://ollama.ai/
 echo Important: Install Ollama and add it to PATH
+echo.
+pause
+exit /b 1
+
+:error_backend_dir
+echo.
+echo [ERROR] Failed to access backend directory
+echo Make sure the installation completed successfully
+echo.
+pause
+exit /b 1
+
+:error_frontend_dir
+echo.
+echo [ERROR] Failed to access frontend directory
+echo Make sure the installation completed successfully
 echo.
 pause
 exit /b 1
