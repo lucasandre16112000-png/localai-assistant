@@ -18,19 +18,19 @@ set "zipPath=%TEMP%\localai-assistant.zip"
 set "extractPath=%TEMP%\localai-extract"
 
 REM Step 1: Create installation folder
-echo [1/6] Creating installation folder...
+echo [1/7] Creating installation folder...
 if not exist "%installPath%" mkdir "%installPath%"
 echo [OK] Folder created at: %installPath%
 echo.
 
 REM Step 2: Download project from GitHub
-echo [2/6] Downloading project from GitHub...
+echo [2/7] Downloading project from GitHub...
 powershell -Command "try { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; (New-Object System.Net.WebClient).DownloadFile('https://github.com/lucasandre16112000-png/localai-assistant/archive/refs/heads/main.zip', '%zipPath%'); Write-Host '[OK] Project downloaded' } catch { Write-Host '[ERROR] Failed to download'; exit 1 }"
 if errorlevel 1 goto error_download
 echo.
 
 REM Step 3: Extract files
-echo [3/6] Extracting files...
+echo [3/7] Extracting files...
 if exist "%extractPath%" (
     rmdir /s /q "%extractPath%" >nul 2>&1
 )
@@ -40,8 +40,7 @@ if errorlevel 1 goto error_extract
 echo.
 
 REM Step 4: Copy files to permanent location
-echo [4/6] Copying files to permanent location...
-REM Remove old installation if exists
+echo [4/7] Copying files to permanent location...
 if exist "%installPath%" (
     rmdir /s /q "%installPath%" >nul 2>&1
 )
@@ -52,14 +51,14 @@ echo [OK] Files copied
 echo.
 
 REM Step 5: Clean up temporary files
-echo [5/6] Cleaning up temporary files...
+echo [5/7] Cleaning up temporary files...
 if exist "%zipPath%" del /f /q "%zipPath%" >nul 2>&1
 if exist "%extractPath%" rmdir /s /q "%extractPath%" >nul 2>&1
 echo [OK] Temporary files cleaned
 echo.
 
 REM Step 6: Check prerequisites
-echo [6/6] Checking prerequisites...
+echo [6/7] Checking prerequisites and starting services...
 
 REM Check if Python is available
 python --version >nul 2>&1
@@ -82,8 +81,30 @@ taskkill /F /IM ollama.exe >nul 2>&1
 timeout /t 1 /nobreak >nul
 start "" ollama serve
 echo [OK] Ollama started
-echo Waiting 10 seconds for Ollama to initialize...
-timeout /t 10 /nobreak >nul
+echo Waiting 15 seconds for Ollama to initialize...
+timeout /t 15 /nobreak >nul
+echo.
+
+REM Check if model exists, if not download it
+echo Checking for AI models...
+for /f "tokens=*" %%i in ('ollama list 2^>nul') do (
+    if "%%i"=="NAME" goto model_check_done
+    if "%%i"=="dolphin-mistral" goto model_exists
+)
+
+echo No models found. Downloading dolphin-mistral (this may take 5-15 minutes)...
+echo Please wait, this is a one-time download...
+echo.
+call ollama pull dolphin-mistral
+if errorlevel 1 (
+    echo [WARNING] Failed to download model, but continuing anyway...
+    echo You can manually download it later with: ollama pull dolphin-mistral
+)
+echo.
+
+:model_exists
+:model_check_done
+echo [OK] Model check complete
 echo.
 
 echo ================================================================================
@@ -95,41 +116,33 @@ echo.
 
 timeout /t 2 /nobreak >nul
 
+REM Step 7: Start backend and frontend
+echo [7/7] Starting backend and frontend...
+echo.
+
 REM Start backend in separate window
 cd /d "%installPath%\backend"
 if errorlevel 1 goto error_backend_dir
 
-echo Installing backend dependencies (this may take 2-3 minutes)...
-start "LocalAI Backend" cmd /k "python -m pip install --upgrade pip setuptools wheel >nul 2>&1 && pip install -r requirements.txt && python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"
+echo Starting backend server...
+start "LocalAI Backend" cmd /k "python -m pip install --upgrade pip setuptools wheel >nul 2>&1 && pip install -r requirements.txt >nul 2>&1 && python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"
 
-REM Wait for backend to start (40 seconds is enough)
-echo Waiting for backend to start...
-timeout /t 40 /nobreak >nul
+REM Wait for backend to start
+echo Waiting for backend to start (30 seconds)...
+timeout /t 30 /nobreak >nul
 echo.
 
 REM Start frontend in separate window
 cd /d "%installPath%\frontend"
 if errorlevel 1 goto error_frontend_dir
 
-echo Installing frontend dependencies...
-start "LocalAI Frontend" cmd /k "npm install --no-fund && npm run dev"
+echo Starting frontend server...
+start "LocalAI Frontend" cmd /k "npm install --no-fund >nul 2>&1 && npm run dev"
 
 REM Wait for frontend to start
-echo Waiting for frontend to start...
+echo Waiting for frontend to start (15 seconds)...
 timeout /t 15 /nobreak >nul
-
-REM Check if frontend is ready by testing the port
-echo Checking if frontend is ready...
-set "counter=0"
-:check_frontend
-netstat -ano | find ":3000" >nul 2>&1
-if errorlevel 1 (
-    set /a counter=!counter!+1
-    if !counter! lss 20 (
-        timeout /t 1 /nobreak >nul
-        goto check_frontend
-    )
-)
+echo.
 
 REM Open browser
 echo.
@@ -145,30 +158,19 @@ start http://localhost:3000
 echo.
 echo ================================================================================
 echo.
-echo                    LOCALAI ASSISTANT IS RUNNING!
+echo                    LOCALAI ASSISTANT IS READY!
+echo.
+echo ================================================================================
 echo.
 echo Frontend: http://localhost:3000
 echo Backend:  http://localhost:8000
 echo Ollama:   http://localhost:11434
 echo.
-echo Docs:     http://localhost:8000/docs
+echo API Docs: http://localhost:8000/docs
 echo.
 echo ================================================================================
 echo.
-echo IMPORTANT - FIRST TIME SETUP:
-echo.
-echo 1. If this is your first time, you need to download an AI model:
-echo    Open a new Command Prompt and run:
-echo.
-echo    ollama pull dolphin-mistral
-echo.
-echo    This will download the model (5-15 minutes depending on internet)
-echo.
-echo 2. After the model is downloaded, refresh the browser or restart the app
-echo.
-echo 3. Then you can start chatting!
-echo.
-echo ================================================================================
+echo You can now start chatting with the AI!
 echo.
 echo IMPORTANT - KEEP RUNNING:
 echo - Keep all terminal windows open
