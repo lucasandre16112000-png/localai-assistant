@@ -81,8 +81,8 @@ taskkill /F /IM ollama.exe >nul 2>&1
 timeout /t 1 /nobreak >nul
 start "" ollama serve
 echo [OK] Ollama started
-echo Waiting 15 seconds for Ollama to initialize...
-timeout /t 15 /nobreak >nul
+echo Waiting 10 seconds for Ollama to initialize...
+timeout /t 10 /nobreak >nul
 echo.
 
 REM Check if model exists, if not download it
@@ -128,8 +128,8 @@ echo Starting backend server...
 start "LocalAI Backend" cmd /k "python -m pip install --upgrade pip setuptools wheel >nul 2>&1 && pip install -r requirements.txt >nul 2>&1 && python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"
 
 REM Wait for backend to start
-echo Waiting for backend to start (30 seconds)...
-timeout /t 30 /nobreak >nul
+echo Waiting for backend to start (20 seconds)...
+timeout /t 20 /nobreak >nul
 echo.
 
 REM Start frontend in separate window
@@ -140,8 +140,8 @@ echo Starting frontend server...
 start "LocalAI Frontend" cmd /k "npm install --no-fund >nul 2>&1 && npm run dev"
 
 REM Wait for frontend to start
-echo Waiting for frontend to start (15 seconds)...
-timeout /t 15 /nobreak >nul
+echo Waiting for frontend to start (10 seconds)...
+timeout /t 10 /nobreak >nul
 echo.
 
 REM Open browser
@@ -153,6 +153,8 @@ echo.
 echo ================================================================================
 echo.
 
+echo Waiting 5 more seconds to ensure everything is ready...
+timeout /t 5 /nobreak >nul
 start http://localhost:3000
 
 echo.
