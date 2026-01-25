@@ -18,88 +18,52 @@ set "zipPath=%TEMP%\localai-assistant.zip"
 set "extractPath=%TEMP%\localai-extract"
 
 REM Step 1: Create installation folder
-echo [1/8] Creating installation folder...
+echo [1/6] Creating installation folder...
 if not exist "%installPath%" mkdir "%installPath%"
 echo [OK] Folder created at: %installPath%
 echo.
 
 REM Step 2: Download project from GitHub
-echo [2/8] Downloading project from GitHub...
+echo [2/6] Downloading project from GitHub...
 powershell -Command "try { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; (New-Object System.Net.WebClient).DownloadFile('https://github.com/lucasandre16112000-png/localai-assistant/archive/refs/heads/main.zip', '%zipPath%'); Write-Host '[OK] Project downloaded' } catch { Write-Host '[ERROR] Failed to download'; exit 1 }"
 if errorlevel 1 goto error_download
 echo.
 
 REM Step 3: Extract files
-echo [3/8] Extracting files...
-if exist "%extractPath%" rmdir /s /q "%extractPath%"
+echo [3/6] Extracting files...
+if exist "%extractPath%" rmdir /s /q "%extractPath%" >nul 2>&1
 mkdir "%extractPath%"
 powershell -Command "try { Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::ExtractToDirectory('%zipPath%', '%extractPath%'); Write-Host '[OK] Files extracted' } catch { Write-Host '[ERROR] Failed to extract'; exit 1 }"
 if errorlevel 1 goto error_extract
 echo.
 
 REM Step 4: Copy files to permanent location
-echo [4/8] Copying files to permanent location...
-if exist "%installPath%\*" rmdir /s /q "%installPath%"
+echo [4/6] Copying files to permanent location...
+if exist "%installPath%\*" rmdir /s /q "%installPath%" >nul 2>&1
 mkdir "%installPath%"
-xcopy "%extractPath%\localai-assistant-main\*" "%installPath%\" /E /I /Y >nul
+xcopy "%extractPath%\localai-assistant-main\*" "%installPath%\" /E /I /Y >nul 2>&1
 echo [OK] Files copied
 echo.
 
 REM Step 5: Clean up temporary files
-echo [5/8] Cleaning up temporary files...
-if exist "%zipPath%" del /f /q "%zipPath%"
-if exist "%extractPath%" rmdir /s /q "%extractPath%"
+echo [5/6] Cleaning up temporary files...
+if exist "%zipPath%" del /f /q "%zipPath%" >nul 2>&1
+if exist "%extractPath%" rmdir /s /q "%extractPath%" >nul 2>&1
 echo [OK] Temporary files cleaned
 echo.
 
-REM Step 6: Install backend dependencies
-echo [6/8] Installing backend dependencies...
-cd /d "%installPath%\backend"
+REM Step 6: Install dependencies and start servers
+echo [6/6] Installing dependencies and starting servers...
+echo.
 
 REM Check if Python is available
 python --version >nul 2>&1
 if errorlevel 1 goto error_python
 
-REM Remove old venv if exists
-if exist "venv" rmdir /s /q venv >nul 2>&1
-
-REM Create venv
-python -m venv venv >nul 2>&1
-if errorlevel 1 goto error_venv
-
-REM Activate venv and install
-call venv\Scripts\activate.bat >nul 2>&1
-
-REM Upgrade pip
-python -m pip install --upgrade pip setuptools wheel >nul 2>&1
-
-REM Install requirements
-pip install -r requirements.txt >nul 2>&1
-if errorlevel 1 goto error_install
-
-echo [OK] Backend dependencies installed
-echo.
-
-REM Step 7: Install frontend dependencies
-echo [7/8] Installing frontend dependencies...
-cd /d "%installPath%\frontend"
-
 REM Check if Node.js is available
 node --version >nul 2>&1
 if errorlevel 1 goto error_node
 
-REM Remove old node_modules if exists
-if exist "node_modules" rmdir /s /q node_modules >nul 2>&1
-
-REM Install npm packages
-npm install --no-fund >nul 2>&1
-if errorlevel 1 goto error_npm
-
-echo [OK] Frontend dependencies installed
-echo.
-
-REM Step 8: Start servers
-echo [8/8] Starting servers...
 echo.
 echo ================================================================================
 echo.
@@ -112,19 +76,19 @@ timeout /t 2 /nobreak >nul
 
 REM Start backend in separate window
 cd /d "%installPath%\backend"
-start "LocalAI Backend" cmd /k "call venv\Scripts\activate.bat && python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"
+start "LocalAI Backend" cmd /k "pip install -q -r requirements.txt && python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"
 
 REM Wait for backend to start
 echo Waiting for backend to start...
-timeout /t 8 /nobreak >nul
+timeout /t 10 /nobreak >nul
 
 REM Start frontend in separate window
 cd /d "%installPath%\frontend"
-start "LocalAI Frontend" cmd /k "npm run dev"
+start "LocalAI Frontend" cmd /k "npm install --no-fund -q && npm run dev"
 
 REM Wait for frontend to start
 echo Waiting for frontend to start...
-timeout /t 8 /nobreak >nul
+timeout /t 10 /nobreak >nul
 
 REM Open browser
 echo.
@@ -185,36 +149,11 @@ echo.
 pause
 exit /b 1
 
-:error_venv
-echo.
-echo [ERROR] Failed to create Python virtual environment
-echo Make sure Python is installed correctly
-echo Try reinstalling Python with "Add Python to PATH" checked
-echo.
-pause
-exit /b 1
-
-:error_install
-echo.
-echo [ERROR] Failed to install backend dependencies
-echo Make sure Python is installed correctly
-echo.
-pause
-exit /b 1
-
 :error_node
 echo.
 echo [ERROR] Node.js not found or not in PATH
 echo Make sure Node.js 18+ is installed
 echo Download from: https://nodejs.org/
-echo.
-pause
-exit /b 1
-
-:error_npm
-echo.
-echo [ERROR] Failed to install frontend dependencies
-echo Make sure Node.js is installed correctly
 echo.
 pause
 exit /b 1
